@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tipray.dao.DeviceDao">
+    <resultMap id="fullResultMap" type="com.tipray.bean.Device">
+        <id column="id" property="id"/>
+        <result column="device_id" property="deviceId"/>
+        <result column="type" property="type"/>
+        <result column="type_name" property="typeName"/>
+        <result column="device_version" property="ver"/>
+        <result column="center_id" property="centerId"/>
+        <result column="center_name" property="centerName"/>
+        <result column="model" property="model"/>
+        <result column="produce" property="produce"/>
+        <result column="delivery" property="delivery"/>
+        <result column="remark" property="remark"/>
+        <result column="gmt_create" property="createDate"/>
+        <result column="gmt_modified" property="modifyDate"/>
+    </resultMap>
+    <sql id="select_colums">
+		d.id,
+		d.device_id,
+		d.type,
+		fn_type2name(d.type) type_name,
+		d.device_version,
+		d.center_id,
+		c.name center_name,
+		d.model,
+		date_format(d.produce_time,'%Y-%m-%d %H:%i:%s') produce,
+		date_format(d.delivery_time,'%Y-%m-%d %H:%i:%s') delivery,
+		d.remark,
+		d.gmt_create,
+		d.gmt_modified
+	</sql>
+    <select id="findAll" resultMap="fullResultMap">
+        select
+        <include refid="select_colums"></include>
+        from
+            tbl_device d,
+            tbl_center c
+        where
+            d.center_id = c.id
+            and d.is_disallowed = 0
+            and d.is_invalid = 0
+            and d.device_id_status = 2
+    </select>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id" parameterType="com.tipray.bean.Device">
+		insert into
+		tbl_device(device_id,type,device_version,center_id,produce_time,delivery_time,model,remark,device_id_status)
+		values(#{deviceId},#{type},#{ver},#{centerId},#{produce},#{delivery},#{model},ifnull(#{remark},''),2)
+	</insert>
+
+    <insert id="addToUseDeviceId" useGeneratedKeys="true" keyProperty="id" parameterType="com.tipray.bean.Device">
+		insert into
+		tbl_device(device_id, type, center_id, device_id_status)
+		values(#{deviceId}, #{type}, 2, 1)
+	</insert>
+
+    <update id="update" parameterType="com.tipray.bean.Device">
+		update tbl_device set
+			device_version    = #{ver},
+			center_id         = #{centerId},
+			produce_time      = #{produce},
+			delivery_time     = #{delivery},
+			model             = ifnull(#{model}, ''),
+			remark            = ifnull(#{remark}, ''),
+			is_invalid        = 0,
+			is_disallowed     = 0,
+			device_id_status  = 2
+		where id              = #{id}
+	</update>
+
+    <update id="updateByDeviceId" parameterType="com.tipray.bean.Device">
+        update tbl_device set
+			device_version    = IFNULL(#{ver}, 0),
+			center_id         = IFNULL(#{centerId}, 2),
+			produce_time      = IFNULL(#{produce}, NOW()),
+			delivery_time     = IFNULL(#{delivery}, NOW()),
+			model             = IFNULL(#{model}, ''),
+			remark            = IFNULL(#{remark}, ''),
+			is_invalid        = 0,
+			is_disallowed     = 0,
+			device_id_status  = 2
+		where device_id       = #{deviceId}
+    </update>
+
+    <update id="upDeviceIdStatus">
+        update tbl_device
+        <set>
+            device_id_status  = #{status}
+            <if test="status > 0">
+                ,is_invalid   = 0
+                ,is_disallowed= 0
+            </if>
+        </set>
+        where device_id       = #{deviceId}
+    </update>
+
+    <update id="delete" parameterType="java.lang.Long">
+		update tbl_device set
+			is_invalid        = 1
+		where id              = #{id}
+	</update>
+
+    <update id="deleteDevicesWithCenterId" parameterType="java.lang.Long">
+		update tbl_device set 
+			is_disallowed     = 1
+		where center_id       = #{centerId}
+	</update>
+
+    <update id="upToUseDeviceIdUnused">
+        UPDATE tbl_device SET
+            device_id_status  = 0
+        WHERE
+            device_id_status  = 1
+            AND TIMESTAMPDIFF( HOUR, gmt_modified, NOW( ) ) > 24
+    </update>
+
+    <select id="countDeviceId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(device_id) from tbl_device where device_id = #{deviceId}
+    </select>
+
+    <select id="getDeviceIdStatus" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select device_id_status from tbl_device where device_id = #{deviceId}
+    </select>
+
+    <select id="getById" parameterType="java.lang.Long" resultMap="fullResultMap">
+        select
+        <include refid="select_colums"></include>
+        from
+            tbl_device d,
+            tbl_center c
+        where
+            d.center_id = c.id
+            and d.is_disallowed = 0
+            and d.is_invalid = 0
+            and d.device_id_status = 2
+            and d.id  = #{id}
+    </select>
+
+    <select id="getByDeviceId" parameterType="java.lang.Integer" resultMap="fullResultMap">
+        select
+        <include refid="select_colums"></include>
+        from
+            tbl_device d,
+            tbl_center c
+        where
+            d.center_id = c.id
+            and d.is_disallowed = 0
+            and d.is_invalid = 0
+            and d.device_id_status = 2
+            and d.device_id = #{deviceId}
+    </select>
+
+    <select id="findByCenter" parameterType="java.lang.String" resultMap="fullResultMap">
+        select
+        <include refid="select_colums"></include>
+        from
+            tbl_device d,
+            tbl_center c
+        where
+            d.center_id = c.id
+            and d.is_disallowed = 0
+            and d.is_invalid = 0
+            and d.device_id_status = 2
+            and c.name = #{centerName}
+    </select>
+    <select id="findByCenterId" parameterType="java.lang.Integer" resultMap="fullResultMap">
+        select
+        <include refid="select_colums"></include>
+        from
+            tbl_device d,
+            tbl_center c
+        where
+            d.center_id = c.id
+            and d.is_disallowed = 0
+            and d.is_invalid = 0
+            and d.device_id_status = 2
+            and c.id = #{centerId}
+    </select>
+
+    <select id="findByType" parameterType="java.lang.Integer" resultMap="fullResultMap">
+        select
+        <include refid="select_colums"></include>
+        from
+            tbl_device d,
+            tbl_center c
+        where
+            d.center_id = c.id
+            and d.is_disallowed = 0
+            and d.is_invalid = 0
+            and d.device_id_status = 2
+            and d.type = #{deviceType}
+    </select>
+
+    <select id="findByCenterAndType" resultMap="fullResultMap">
+        select
+        <include refid="select_colums"></include>
+        from
+            tbl_device d,
+            tbl_center c
+        where
+            d.center_id = c.id
+            and d.is_disallowed = 0
+            and d.is_invalid = 0
+            and d.device_id_status = 2
+        <if test="centerName != null and centerName != ''">
+            and c.name = #{centerName}
+        </if>
+        <if test="type != null">
+            and d.type = #{type}
+        </if>
+    </select>
+
+    <select id="count" parameterType="com.tipray.bean.Device" resultType="java.lang.Long">
+        select count(*) from tbl_device where is_disallowed=0 and is_invalid=0 and device_id_status=2
+        <if test="type != null and type != -2">
+            and type = #{type}
+        </if>
+        <if test="centerId != null and centerId != -2">
+            and center_id = #{centerId}
+        </if>
+    </select>
+
+    <select id="findByPage" resultMap="fullResultMap">
+        select
+        <include refid="select_colums"></include>
+        from
+            tbl_device d,
+            tbl_center c
+        where
+            d.center_id = c.id
+            and d.is_disallowed = 0
+            and d.is_invalid = 0
+            and d.device_id_status = 2
+        <if test="entity.centerId != null and entity.centerId != -2">
+            and d.center_id = #{entity.centerId}
+        </if>
+        <if test="entity.type != null and entity.type != -2">
+            and d.type = #{entity.type}
+        </if>
+        order by d.gmt_create desc, d.id desc
+        limit #{page.startRow}, #{page.rows}
+    </select>
+
+    <select id="getFtpConfigByDeviceId" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT
+			inet_ntoa( f.`host` ) host,
+			f.`port` port,
+			f.`directory` dir,
+			f.account user,
+			f.`password` pwd 
+		FROM
+			tbl_ftp f,
+			tbl_device d 
+		WHERE
+			f.center_id = d.center_id 
+			AND d.is_disallowed = 0 
+			AND d.is_invalid = 0 
+			AND d.device_id = #{deviceId}
+	</select>
+
+    <select id="getCenterByDeviceId" parameterType="java.lang.Integer" resultType="java.util.LinkedHashMap">
+		SELECT
+          INET_NTOA(c.ip)                                                                                                ip,
+          c.tcp_port                                                                                                     port,
+          HEX(c.rc4)                                                                                                     rc4,
+          CAST(CONV(HEX(c.rc4_version), 16, 10) AS UNSIGNED)                                                             ver,
+          CONCAT_WS('', f.protocol, '://', f.account, ':', f.password, '@', INET_NTOA(f.host), ':', f.port, f.directory) ftp
+        FROM
+          tbl_center c,
+          tbl_ftp f,
+          tbl_device d
+        WHERE
+          c.id = d.center_id
+          AND c.id = f.center_id
+          AND d.is_disallowed = 0
+          AND d.is_invalid = 0
+          AND d.device_id = #{deviceId}
+	</select>
+
+    <select id="getCenterRc4ByCenterId" parameterType="java.lang.Integer" resultType="java.lang.String">
+		select CONCAT(hex((rc4)), hex(rc4_version))
+		from tbl_center
+		where id = #{centerId}
+	</select>
+
+    <select id="getBarrierByCenterId" parameterType="java.lang.Integer" resultType="java.util.LinkedHashMap">
+		select
+            INET_NTOA(c.ip)                                    ip,
+            c.barrier_port                                     port,
+            HEX(c.rc4)                                         rc4,
+            CAST(CONV(HEX(c.rc4_version), 16, 10) AS UNSIGNED) ver
+        from tbl_center c
+        where c.id = #{centerId}
+	</select>
+
+    <select id="findMaxDeviceIdsOfType" resultType="com.tipray.bean.Device">
+		SELECT MAX(device_id) device_id,type FROM tbl_device GROUP BY type ORDER BY type asc
+	</select>
+
+    <select id="findUnusedDeviceIdByType" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT
+            device_id
+        FROM
+            `tbl_device`
+        WHERE
+            device_id_status = 0
+            AND type = #{type}
+        ORDER BY
+            device_id ASC
+    </select>
+
+    <select id="getMaxDeviceIdByType" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT MAX(device_id) device_id FROM tbl_device WHERE type = #{type}
+	</select>
+
+</mapper>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>操作员列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../resources/css/base.css" media="all">
+    <link rel="stylesheet" href="../../resources/css/normal.css" media="all">
+    <script src="../../resources/plugins/jquery-3.2.1.min.js"></script>
+    <script src="../../resources/plugins/SelectBox.min.js"></script>
+    <script src="../../resources/plugins/layer/layer.js"></script>
+    <script src="../../resources/js/base.js"></script>
+    <script src="../../resources/js/normal.js"></script>
+    <script src="../../resources/js/user/userList.js"></script>
+    <style type="text/css">
+        .user-id {
+            width: 80px;
+        }
+        
+        .user-account {
+            width: 100px;
+        }
+        
+        .user-role {
+            width: 100px;
+        }
+        
+        .user-name {
+            width: 100px;
+        }
+        
+        .user-phone {
+            width: 160px;
+        }
+        
+        .user-card {
+            width: 200px;
+        }
+        
+        .user-remark {
+            width: 100px;
+        }
+        
+        .user-action {
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+    	<div class="nav-addr">
+	        <img src="../../resources/images/navbar/permission.png"> 操作员权限管理
+	    </div>
+        <div class="search-zone">
+            <select id="search_type">
+                <option value="0">查询类型</option>
+                <option value="1">账号</option>
+                <option value="2">姓名</option>
+            </select>
+            <input type="text" id="search_text">
+            <input type="button" id="search_btn" value="查询">
+            <input type="button" id="add" value="添加" onclick="dispatch('add',0)">
+        </div>
+        <div class="data-zone">
+            <div class='table-cont' id='table-cont'>
+                <table width="100%">
+                    <thead class="table-head">
+                        <tr>
+                            <th class="user-id">操作员ID</th>
+                            <th class="user-account">账号</th>
+                            <th class="user-role">角色</th>
+                            <th class="user-name">姓名</th>
+                            <th class="user-phone">联系电话</th>
+                            <th class="user-card">身份证号</th>
+                            <th class="user-remark">备注</th>
+                            <th class="user-action">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-body"></tbody>
+                </table>
+            </div>
+            <div class="page">
+                <span>第</span>
+                <select id="page_id">
+                    <option value="1">1</option>
+                </select>
+                <span id="page_info">页(几条数据)/共几页(共几条数据)</span>
+                <select id="page_size">
+                   	<option value="25">25条/页</option>
+                    <option value="50">50条/页</option>
+                    <option value="100">100条/页</option>
+                    <option value="150">150条/页</option>
+                </select>
+                <input type="hidden" id="uaccount">
+                <input type="hidden" id="uname">
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

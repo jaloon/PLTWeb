@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.tipray.dao.CenterDao">
+	<resultMap id="fullResultMap" type="com.tipray.bean.Center" >
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="ip" property="ip" />
+        <result column="web_port" property="webPort" />
+        <result column="tcp_port" property="tcpPort" />
+        <result column="barrier_port" property="barrierPort" />
+        <result column="director" property="director" />
+        <result column="phone" property="phone" />
+        <result column="address" property="address" />
+        <result column="remark" property="remark" />
+        <result column="gmt_create" property="createDate" />
+        <result column="gmt_modified" property="modifyDate" />
+        <result column="ftp_protocol" property="ftpConfig.protocol" />
+        <result column="ftp_host" property="ftpConfig.host" />
+        <result column="ftp_port" property="ftpConfig.port" />
+        <result column="ftp_dir" property="ftpConfig.directory" />
+        <result column="ftp_account" property="ftpConfig.account" />
+        <result column="ftp_password" property="ftpConfig.password" />
+        <result column="ftp_remark" property="ftpConfig.remark" />
+    </resultMap>
+    
+    <sql id="select_colums">
+    	c.id,
+    	c.`name`,
+    	inet_ntoa(c.ip) ip,
+    	c.`web_port`,
+    	c.`tcp_port`,
+    	c.`barrier_port`,
+    	c.director,
+    	c.phone,
+    	c.address,
+    	c.remark,
+    	c.gmt_create,
+    	c.gmt_modified,
+    	f.protocol ftp_protocol,
+    	inet_ntoa(f.`host`) ftp_host,
+    	f.`port` ftp_port,
+    	f.`directory` ftp_dir,
+    	f.account ftp_account,
+    	f.`password` ftp_password,
+    	f.remark ftp_remark
+    </sql>
+    
+	<select id="findAll" resultMap="fullResultMap">
+		select <include refid="select_colums"></include>  
+		from tbl_center c, tbl_ftp f where c.is_invalid=0 and c.id = f.center_id
+	</select>
+	
+	<insert id="add" useGeneratedKeys="true" keyProperty="id" parameterType="com.tipray.bean.Center">
+		insert into tbl_center(name,ip,web_port,tcp_port,barrier_port,rc4,rc4_version,director,phone,address,remark) 
+		values(#{name},inet_aton(#{ip}),#{webPort},#{tcpPort},#{barrierPort},#{rc4},#{rc4Version},#{director},#{phone},#{address},ifnull(#{remark},''))
+	</insert>
+	
+	<insert id="addFtp" useGeneratedKeys="true" keyProperty="id" parameterType="com.tipray.bean.FtpConfig">
+		INSERT INTO tbl_ftp (center_id, protocol, `host`, `port`, `directory`, account, `password`, remark)
+		VALUES
+			(#{centerId}, #{protocol}, INET_ATON(#{host}), #{port}, #{directory}, #{account}, #{password}, #{remark});
+	</insert>
+	
+	<update id="update" parameterType="com.tipray.bean.Center">
+		update tbl_center set 
+			name			=	#{name},
+			ip				=	inet_aton(#{ip}),
+			web_port		=	#{webPort},
+			tcp_port		=	#{tcpPort},
+			barrier_port	=	#{barrierPort},
+			director		=	#{director},
+			phone			=	#{phone},
+			address			=	#{address},
+			remark			=	ifnull(#{remark},'')
+		where id 			= 	#{id}
+	</update>
+	
+	<update id="updateFtp" parameterType="com.tipray.bean.FtpConfig">
+		UPDATE `tbl_ftp` SET 
+			`protocol`	= 	#{protocol},
+			`host` 		= 	INET_ATON(#{host}),
+			`port`		=	#{port},
+			`directory`	= 	#{directory},
+			`account`	=	#{account},
+			`password`	=	#{password},
+			`remark`	=	IFNULL(#{remark}, '')
+		WHERE
+			`center_id`	=	#{centerId}
+	</update>
+	
+	<update id="delete" parameterType="java.lang.Long">
+		<!-- delete from tbl_center where centerid=#{id} -->
+		update tbl_center set 
+		is_invalid=1
+		where id=#{id}
+	</update>
+	
+	<delete id="deleteFtp" parameterType="java.lang.Long">
+		delete from tbl_ftp where center_id = #{centerId}
+	</delete>
+	
+	<select id="getById" parameterType="java.lang.Long" resultMap="fullResultMap">
+		select <include refid="select_colums"></include>  
+		from tbl_center c, tbl_ftp f where c.is_invalid=0 and c.id = f.center_id and c.id=#{id}
+	</select>
+	<select id="getByName" parameterType="java.lang.String" resultMap="fullResultMap">
+		select <include refid="select_colums"></include>  
+		from tbl_center c, tbl_ftp f where c.is_invalid=0 and c.id = f.center_id and c.name = #{centerName}
+	</select>
+	
+	<select id="count" parameterType="com.tipray.bean.Center" resultType="java.lang.Long">
+		select count(*) from tbl_center where is_invalid=0 
+		<if test="name != null and name !=''" >
+			and name like CONCAT('%',#{name},'%')
+		</if>
+	</select>
+	
+	<select id="findByPage" resultMap="fullResultMap">
+		select <include refid="select_colums"></include>  
+		from tbl_center c, tbl_ftp f where c.is_invalid=0 and c.id = f.center_id
+		<if test="entity.name != null and entity.name !=''" >
+			and c.name like CONCAT('%',#{entity.name},'%')
+		</if>
+		order by c.id asc  
+		limit #{page.startRow}, #{page.rows}
+	</select>
+
+	<select id="getCenterList" resultType="com.tipray.bean.Center">
+        select id, `name` from tbl_center ORDER BY id
+    </select>
+
+	<select id="getIpAndWebport" parameterType="java.lang.Integer" resultType="java.util.Map">
+        select inet_ntoa(ip) ip, web_port port from tbl_center where id = #{centerId}
+    </select>
+
+</mapper>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tipray.dao.AppverDao">
+    <resultMap id="fullResultMap" type="com.tipray.bean.AppVer">
+        <id column="id" property="id"/>
+        <result column="center_id" property="centerId"/>
+        <result column="center_name" property="centerName"/>
+        <result column="system" property="system"/>
+        <result column="assign_webapp_version" property="assignVer"/>
+        <result column="min_webapp_version" property="minVer"/>
+    </resultMap>
+
+    <sql id="select_colums">
+        a.id,
+    	a.center_id,
+        c.`name` center_name,
+        a.system,
+        a.assign_webapp_version,
+        a.min_webapp_version
+    </sql>
+
+    <select id="findAll" resultMap="fullResultMap">
+        SELECT
+        <include refid="select_colums"></include>
+        FROM
+        tbl_webapp_version a,
+        tbl_center c
+        WHERE
+        a.center_id = c.id
+    </select>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id" parameterType="com.tipray.bean.AppVer">
+		INSERT INTO tbl_webapp_version(center_id, system, assign_webapp_version, min_webapp_version)
+		VALUES
+			(
+				#{centerId},
+				#{system},
+				#{assignVer},
+				#{minVer}
+			)
+	</insert>
+
+    <update id="update" parameterType="com.tipray.bean.AppVer">
+        update tbl_webapp_version set
+            <!-- center_id               = #{centerId}, -->
+            <!-- system                  = #{system}, -->
+            assign_webapp_version   = #{assignVer},
+            min_webapp_version      = #{minVer}
+        where id                    = #{id}
+    </update>
+
+    <update id="delete" parameterType="java.lang.Long">
+		delete from tbl_webapp_version where id = #{id}
+	</update>
+
+    <select id="getById" parameterType="java.lang.Long" resultMap="fullResultMap">
+        SELECT
+        <include refid="select_colums"></include>
+        FROM
+        tbl_webapp_version a,
+        tbl_center c
+        WHERE
+        a.center_id = c.id
+        AND a.id = #{id}
+    </select>
+
+    <select id="countCenterAppVer" resultType="java.lang.Integer">
+        select count(*) from tbl_webapp_version where center_id = #{centerId} and system = #{system}
+    </select>
+
+    <select id="count" parameterType="com.tipray.bean.AppVer" resultType="java.lang.Long">
+        select count(a.id)
+        from
+        tbl_webapp_version a,
+        tbl_center c
+        where
+        a.center_id = c.id
+        <if test="centerName != null and centerName !=''">
+            and c.name like CONCAT('%',#{centerName},'%')
+        </if>
+    </select>
+
+    <select id="findByPage" resultMap="fullResultMap">
+        SELECT
+        <include refid="select_colums"></include>
+        FROM
+        tbl_webapp_version a,
+        tbl_center c
+        WHERE
+        a.center_id = c.id
+        <if test="entity.centerName != null and entity.centerName !=''">
+            and c.name like CONCAT('%',#{entity.centerName},'%')
+        </if>
+        order by a.gmt_create desc, a.id desc
+        limit #{page.startRow}, #{page.rows}
+    </select>
+
+    <select id="findByCenterId" parameterType="java.lang.Long" resultType="com.tipray.bean.AppVer">
+        SELECT
+            id,
+            center_id centerId,
+            system,
+            assign_webapp_version assignVer,
+            min_webapp_version minVer,
+            gmt_create createDate,
+            gmt_modified modifyDate
+        FROM
+            tbl_webapp_version
+        WHERE
+            center_id = #{centerId}
+    </select>
+
+    <select id="getAssignVerByCenterIdAndSystem" resultType="java.lang.String">
+        select assign_webapp_version from tbl_webapp_version where center_id = #{centerId} and system = #{system}
+    </select>
+
+    <select id="getCenterWebAddrById" parameterType="java.lang.Long" resultType="com.tipray.bean.AppInfo">
+        select
+            inet_ntoa(c.ip) ip,
+            c.web_port port
+        from
+            tbl_center c,
+            tbl_webapp_version v
+        where
+            c.id = v.center_id
+            and v.id = #{centerId}
+    </select>
+
+    <select id="getCenterWebAddrByCenterId" parameterType="java.lang.Long" resultType="com.tipray.bean.AppInfo">
+        select inet_ntoa(ip) ip, web_port port from tbl_center where id = #{centerId}
+    </select>
+
+</mapper>

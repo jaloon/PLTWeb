@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	description：代表详细描述;
+	permissionType：代表是功能或是菜单权限{1:代表菜单;0：代表功能};
+	ename：代表对应权限的英文名;
+	cname：代表所对应的权限名称;
+	enable：是否启用{1:启用;0:不启用}
+	gridUrl：代表菜单对应显示界面的连接
+	isParent：是否是父节点{1:是;0:否}
+ -->
+<permission-config>
+	<permission cname="系统管理" ename="systemManage" permissionType="1" description=" ">
+		<permission cname="操作员管理" ename="userManage" permissionType="1" description=" ">
+			<permission cname="角色" ename="roleModule" permissionType="1" gridUrl="normal/role/roleList.jsp">
+				<permission cname="编辑角色" ename="editRole" permissionType="0" description=" " />
+				<permission cname="查看角色" ename="viewRole" permissionType="0" description=" " />
+			</permission>
+			<permission cname="操作员" ename="userModule" permissionType="1" gridUrl="normal/user/userList.jsp">
+				<permission cname="编辑操作员" ename="editUser" permissionType="0" description=" " />
+				<permission cname="查看操作员" ename="viewUser" permissionType="0" description=" " />
+			</permission>
+		</permission>
+	</permission>
+	<permission cname="信息管理" ename="infoManage" permissionType="1" description="">
+		<permission cname="用户中心管理" ename="centerManage" permissionType="1" gridUrl="normal/center/centerlist.jsp">
+			<permission cname="编辑用户中心" ename="editCenter" permissionType="0" description="" />
+			<permission cname="查看用户中心" ename="viewCenter" permissionType="0" description="" />
+		</permission>
+		<permission cname="设备信息管理" ename="deviceManage" permissionType="1" gridUrl="normal/device/devicelist.jsp">
+			<permission cname="编辑设备信息" ename="editDevice" permissionType="0" description="" />
+			<permission cname="查看设备信息" ename="viewDevice" permissionType="0" description="" />
+		</permission>
+		<permission cname="APP设备管理" ename="appdevManage" permissionType="1" gridUrl="normal/appdev/appdevlist.jsp">
+			<permission cname="编辑APP设备" ename="editAppdev" permissionType="0" description="" />
+			<permission cname="查看APP设备" ename="viewAppdev" permissionType="0" description="" />
+		</permission>
+		<permission cname="APP版本管理" ename="appverManage" permissionType="1" gridUrl="normal/appver/appverlist.jsp">
+			<permission cname="编辑APP版本" ename="editAppver" permissionType="0" description="" />
+			<permission cname="查看APP版本" ename="viewAppver" permissionType="0" description="" />
+		</permission>
+	</permission>
+</permission-config>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="jquery-3.2.1.min.js"></script>
+    <script src="SelectBox.min.js"></script>
+    <style>
+        /* div {
+            color: red;
+            display: block;
+            float: left;
+        }
+        
+        div:after {
+            content: '';
+            display: block;
+            clear: both;
+        } */
+        
+        #box1 {
+            height: 26px;
+            width: 384px;
+            line-height: 26px;
+            border: 1px solid #d7dbe2;
+            border-radius: 3px;
+            padding: 0 6px 0 6px;
+            color: #57647c;
+        }
+        
+        .box {
+            width: 50px;
+            height: 20px;
+            display: inline;
+            background: lightcyan;
+        }
+    </style>
+</head>
+
+
+<body>
+    <!-- <div>
+        <input type="text" id="str1">
+        <div id="box1"></div>
+        <input type="text" id="str">
+        <input type="button" value="btn" id="btn">
+        <input type="text" id="str2">
+        <input type="button" value="btn" id="btn2">
+    </div> -->
+
+    <div class="box" id="select2">1432514364</div>
+    <div id="select1">1546546456</div>
+    <div id="select3">1546546456</div>
+    <input type="button" id="test" value="test"><br>
+    <div class="page">
+        <span>第</span>
+        <!-- <select id="page_id">
+                <option value="1">1</option>
+            </select> -->
+        <div id="page_id"></div>
+        <span id="page_info">页(几条数据)/共几页(共几条数据)</span>
+        <!-- <select id="page_size">
+                <option value="10">10条/页</option>
+                <option value="20">20条/页</option>
+                <option value="25">25条/页</option>
+                <option value="30">30条/页</option>
+                <option value="50">50条/页</option>
+            </select id="page_size"> -->
+        <div></div>
+        <input type="hidden" id="uaccount">
+        <input type="hidden" id="uname">
+    </div>
+</body>
+<script>
+    $(function() {
+        var humens = [{
+            html: '张三',
+            value: '12岁',
+            type: 3
+        }, {
+            html: '李四',
+            value: '8岁',
+            type: 4
+        }, {
+            html: '王五',
+            value: '6岁',
+            type: 1
+        }];
+        // var select = new SelectBox($("#select1"));
+        var  select3  =  new  SelectBox($("#select3"),  humens, function(result) {
+            // $("#str").val(result.msg);
+            // if (!isNum(result.msg)) {
+            //     result.id = null;
+            //     result.msg = null;
+            // }
+            console.log(result.msg);
+        }, {
+            dataName: 'type', //option的html
+            dataId: 'value', //option的value	
+            width: 50, //宽
+            height: 26, //高	
+        });
+        var  select  =  new  SelectBox($("#select1"),   ['', '上仓锁', '下仓锁'], function(result) {
+            // $("#str").val(result.msg);
+            // if (!isNum(result.msg)) {
+            //     result.id = null;
+            //     result.msg = null;
+            // }
+            console.log(1);
+        });
+        select.changeFnBack(function(result) {
+            console.log(2);
+            select3.setValue(result.msg);
+        });
+        select.setValue("能看见");
+        select.close();
+        $("#test").click(function() {
+            var a = select.getResult();
+            var b = a.msg;
+            var c = select3.getResult().msg;
+        });
+        // console.log(select.getResult().msg);
+        $("#box1").keyup(function() {
+            var msg = select.getResult().msg;
+            if (!isNum(msg)) {
+                select.setValue("");
+            }
+        });
+        $("#box1").keypress(function() {
+            var msg = select.getResult().msg;
+            if (!isNum(msg)) {
+                select.setValue("");
+            }
+        });
+        $("#btn").click(function() {
+            $("#str").val(select.getResult().id);
+        });
+        $("#btn2").click(function() {
+            var str2 = $("#str2").val();
+            if (!isNum(str2)) {
+                $("#str2").val("");
+            }
+        });
+
+        function isNum(str) {
+            var r = /^\+?[1-9][0-9]*$/;　　 //正整数 
+            return r.test(str);
+        }
+
+    })
+</script>
+
+</html>

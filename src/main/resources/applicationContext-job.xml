@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+    http://www.springframework.org/schema/task
+	http://www.springframework.org/schema/task/spring-task-4.1.xsd">
+
+    <!-- 启用注解驱动的定时任务 -->
+    <task:annotation-driven scheduler="scheduler"/>
+    <!-- 配置定时任务的线程池（多任务时需要进行配置，若不配置多任务下会有问题。） -->
+    <task:scheduler id="scheduler" pool-size="5"/>
+
+    <task:scheduled-tasks scheduler="scheduler">
+        <!--<task:scheduled ref="exampleJob" method="execute" cron="*/7 * * * * ?"/>-->
+        <!--定时检查更新未使用的设备ID状态任务，每天0点执行一次-->
+        <task:scheduled ref="scheduledJob" method="executeCheckDeviceIdStatus" cron="0 0 0 * * ?"/>
+    </task:scheduled-tasks>
+
+</beans>
