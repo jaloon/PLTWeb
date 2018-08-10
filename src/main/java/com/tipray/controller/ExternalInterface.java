@@ -296,39 +296,53 @@ public class ExternalInterface {
                 return ResponseMsgUtil.error(AppInfoObtainErrorEnum.VERSION_INVALID);
             }
 
-            // 更新当前版本和型号
-            appdevService.updateModelAndCurrentVerByUuid(model, curver, uuid);
-
+            if (appdevService.isAppdevExist(uuid)) {
+                // 更新当前版本和型号
+                appdevService.updateModelAndCurrentVerByUuid(model, curver, uuid);
+            } else {
+                // APP设备记录不存在，添加一条记录
+                AppDev appDev = new AppDev();
+                appDev.setUuid(uuid);
+                appDev.setSystem(system);
+                appDev.setModel(model);
+                appDev.setCurrentVer(curver);
+                appdevService.addAppdev(appDev);
+            }
+            String assignVer = appverService.getAssignVerByCenterIdAndSystem(0L, system);
             List<Long> centerIds = appdevService.findCenterIdsByUuid(uuid);
             int centerNum = centerIds.size();
             if (centerNum == 0) {
-                if (!appdevService.isAppdevExist(uuid)) {
-                    // APP设备记录不存在，添加一条记录
-                    AppDev appDev = new AppDev();
-                    appDev.setUuid(uuid);
-                    appDev.setSystem(system);
-                    appDev.setModel(model);
-                    appDev.setCurrentVer(curver);
-                    appdevService.addAppdev(appDev);
+                if (StringUtil.isEmpty(assignVer)) {
+                    logger.warn("请求APP配置失败：{}", AppInfoObtainErrorEnum.CENTER_NULL);
+                    return ResponseMsgUtil.error(AppInfoObtainErrorEnum.CENTER_NULL);
                 }
-                logger.warn("请求APP配置失败：{}", AppInfoObtainErrorEnum.CENTER_NULL);
-                return ResponseMsgUtil.error(AppInfoObtainErrorEnum.CENTER_NULL);
-            }
-            if (centerNum > 1) {
-                if (centerId == 0) {
-                    logger.warn("请求APP配置失败：{}", AppInfoObtainErrorEnum.CENTER_NOT_UNIQUE);
-                    return ResponseMsgUtil.error(AppInfoObtainErrorEnum.CENTER_NOT_UNIQUE);
-                }
-                if (!centerIds.contains(centerId)) {
-                    logger.warn("请求APP配置失败：{}", AppInfoObtainErrorEnum.CENTER_ID_INVALID);
-                    return ResponseMsgUtil.error(AppInfoObtainErrorEnum.CENTER_ID_INVALID);
-                }
-            }
-            if (centerNum == 1) {
+                centerId = 0L;
+            } else if (centerNum == 1) {
                 centerId = centerIds.get(0);
+                assignVer = appverService.getAssignVerByCenterIdAndSystem(centerId, system);
+            } else {
+                if (centerId > 0 && centerIds.contains(centerId)) {
+                    assignVer = appverService.getAssignVerByCenterIdAndSystem(centerId, system);
+                } else {
+                    if (StringUtil.isEmpty(assignVer)) {
+                        if (centerId == 0) {
+                            logger.warn("请求APP配置失败：{}", AppInfoObtainErrorEnum.CENTER_NOT_UNIQUE);
+                            return ResponseMsgUtil.error(AppInfoObtainErrorEnum.CENTER_NOT_UNIQUE);
+                        }
+                        if (!centerIds.contains(centerId)) {
+                            logger.warn("请求APP配置失败：{}", AppInfoObtainErrorEnum.CENTER_ID_INVALID);
+                            return ResponseMsgUtil.error(AppInfoObtainErrorEnum.CENTER_ID_INVALID);
+                        }
+                    }
+                    centerId = 0L;
+                }
             }
-            AppInfo appInfo = appdevService.getCenterWebAddr(centerId);
-            String assignVer = appverService.getAssignVerByCenterIdAndSystem(centerId, system);
+            AppInfo appInfo = new AppInfo();
+            if (centerId > 0) {
+                appInfo = appdevService.getCenterWebAddr(centerId);
+            } else {
+                appInfo.setCenter_id(0);
+            }
             if (assignVer == null) {
                 logger.warn(AppInfoObtainErrorEnum.UP_VER_NULL.msg());
             } else {
