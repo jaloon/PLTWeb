@@ -237,6 +237,7 @@
                     a.uuid = d.uuid
                     AND a.id = #{appdevId}
             ) t ON c.id = t.center_id
+        WHERE c.id > 0
         ORDER BY c.id
     </select>
 
@@ -253,6 +254,6 @@
     </select>
 
     <select id="getCenterWebAddr" parameterType="java.lang.Long" resultType="com.tipray.bean.AppInfo">
-        select id center_id, inet_ntoa(ip) ip, web_port port from tbl_center where id = #{centerId}
+        select id center_id, name center_name, inet_ntoa(ip) ip, web_port port from tbl_center where id = #{centerId}
     </select>
 </mapper>

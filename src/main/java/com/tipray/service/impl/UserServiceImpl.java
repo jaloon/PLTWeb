@@ -1,12 +1,5 @@
 package com.tipray.service.impl;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.tipray.bean.GridPage;
 import com.tipray.bean.Page;
 import com.tipray.bean.User;
@@ -16,6 +9,12 @@ import com.tipray.dao.UserDao;
 import com.tipray.service.UserService;
 import com.tipray.util.MD5Util;
 import com.tipray.util.StringUtil;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 @Transactional
 @Service("userService")
@@ -28,13 +27,25 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User addUser(User user, Long roleId) throws ServiceException, NoSuchAlgorithmException {
 		if (user != null) {
+			String account = user.getAccount();
+			if (account == null || account.trim().isEmpty()) {
+				throw new IllegalArgumentException("账号为空！");
+			}
 			user.setRole(roleDao.getById(roleId));
 			String password = MD5Util.md5Encode("123456");
 			if (StringUtil.isNotEmpty(user.getPassword())) {
 				password = MD5Util.md5Encode(user.getPassword());
 			}
 			user.setPassword(password);
-			userDao.add(user);
+			Integer count = userDao.countByAccount(account);
+			if (count == null || count == 0) {
+				userDao.add(user);
+			} else if (count == 1) {
+				userDao.updateByAccount(user);
+			} else {
+				userDao.deleteByAccount(account);
+				userDao.add(user);
+			}
 		}
 		return user;
 	}

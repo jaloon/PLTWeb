@@ -9,6 +9,24 @@ import java.util.List;
 @MyBatisAnno
 public interface UserDao extends BaseDao<User> {
 	/**
+	 * 统计账号数目
+	 * @param account
+	 * @return
+	 */
+	Integer countByAccount(String account);
+
+	/**
+	 * 根据账号更新用户
+	 * @param user
+	 */
+	void updateByAccount(User user);
+
+	/**
+	 * 根据账号删除用户
+	 * @param account
+	 */
+	void deleteByAccount(String account);
+	/**
 	 * 修改密码
 	 * 
 	 * @param user

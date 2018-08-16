@@ -10,6 +10,25 @@ import java.util.Map;
 
 @MyBatisAnno
 public interface CenterDao extends BaseDao<Center> {
+    /**
+     * 统计用户中心名称
+     * @param centerNamne
+     * @return
+     */
+	Integer countByCenterName(String centerNamne);
+
+    /**
+     * 根据用户中心名称更新中心
+     * @param center
+     */
+	void updateByCenterName(Center center);
+
+    /**
+     * 根据用户中心名称删除中心
+     * @param centerName
+     */
+	void deleteByCenterName(String centerName);
+
 	/**
 	 * 根据用户中心名称获取用户中心信息
 	 * 

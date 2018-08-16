@@ -110,7 +110,7 @@
 	</select>
 	
 	<select id="count" parameterType="com.tipray.bean.Center" resultType="java.lang.Long">
-		select count(*) from tbl_center where is_invalid=0 
+		select count(*) from tbl_center where is_invalid = 0 and id > 0
 		<if test="name != null and name !=''" >
 			and name like CONCAT('%',#{name},'%')
 		</if>
@@ -118,7 +118,8 @@
 	
 	<select id="findByPage" resultMap="fullResultMap">
 		select <include refid="select_colums"></include>  
-		from tbl_center c, tbl_ftp f where c.is_invalid=0 and c.id = f.center_id
+		from tbl_center c, tbl_ftp f
+		where c.is_invalid = 0 and c.id = f.center_id and c.id > 0
 		<if test="entity.name != null and entity.name !=''" >
 			and c.name like CONCAT('%',#{entity.name},'%')
 		</if>
@@ -133,5 +134,29 @@
 	<select id="getIpAndWebport" parameterType="java.lang.Integer" resultType="java.util.Map">
         select inet_ntoa(ip) ip, web_port port from tbl_center where id = #{centerId}
     </select>
+
+    <select id="countByCenterName" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(`name`) from tbl_center where `name` = #{centerNamne}
+    </select>
+
+    <update id="updateByCenterName" parameterType="com.tipray.bean.Center">
+        update tbl_center set
+			ip				=	inet_aton(#{ip}),
+			web_port		=	#{webPort},
+			tcp_port		=	#{tcpPort},
+			barrier_port	=	#{barrierPort},
+			rc4             =   #{rc4},
+			rc4_version     =   #{rc4Version},
+			director		=	#{director},
+			phone			=	#{phone},
+			address			=	#{address},
+			remark			=	ifnull(#{remark},''),
+            `is_invalid`    =   0
+        where `name`		=	#{name}
+    </update>
+
+    <delete id="deleteByCenterName" parameterType="java.lang.String">
+        delete from tbl_center where `name` = #{centerName}
+    </delete>
 
 </mapper>

@@ -311,14 +311,16 @@
         <div class="table-zone">
             <table>
                 <c:forEach items="${centers}" var="center">
-                    <tr>
-                        <td>
-                            <label>
-                                <input type="checkbox" class="center" value="${center.id}">
-                                <span>${center.name}</span>
-                            </label>
-                        </td>
-                    </tr>
+                    <c:if test="${center.id > 0}">
+                        <tr>
+                            <td>
+                                <label>
+                                    <input type="checkbox" class="center" value="${center.id}">
+                                    <span>${center.name}</span>
+                                </label>
+                            </td>
+                        </tr>
+                    </c:if>
                 </c:forEach>
             </table>
         </div>

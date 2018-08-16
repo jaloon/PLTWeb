@@ -246,29 +246,29 @@ $(function() {
             return;
         }
 
-        if (isNull(director)) {
-            layer.alert('负责人不能为空！', { icon: 0 }, function(index2) {
-                layer.close(index2);
-                $("#director").select();
-            });
-            return;
-        }
-
-        if (!isPhone(phone)) {
-            layer.alert('电话号码不正确！', { icon: 5 }, function(index2) {
-                layer.close(index2);
-                $("#phone").select();
-            });
-            return;
-        }
-
-        if (isNull(address)) {
-            layer.alert('地址不能为空！', { icon: 0 }, function(index2) {
-                layer.close(index2);
-                $("#address").select();
-            });
-            return;
-        }
+        // if (isNull(director)) {
+        //     layer.alert('负责人不能为空！', { icon: 0 }, function(index2) {
+        //         layer.close(index2);
+        //         $("#director").select();
+        //     });
+        //     return;
+        // }
+        //
+        // if (!isPhone(phone)) {
+        //     layer.alert('电话号码不正确！', { icon: 5 }, function(index2) {
+        //         layer.close(index2);
+        //         $("#phone").select();
+        //     });
+        //     return;
+        // }
+        //
+        // if (isNull(address)) {
+        //     layer.alert('地址不能为空！', { icon: 0 }, function(index2) {
+        //         layer.close(index2);
+        //         $("#address").select();
+        //     });
+        //     return;
+        // }
 
         $.post(url, param,
             function(data) {

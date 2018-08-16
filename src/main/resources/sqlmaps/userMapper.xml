@@ -114,5 +114,26 @@
 		<include refid="select_where_vo"></include> 
 		order by u.id asc  
 		limit #{page.startRow}, #{page.rows}
-	</select>	
+	</select>
+
+    <select id="countByAccount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(account) from tbl_user where account = #{account}
+    </select>
+
+    <update id="updateByAccount" parameterType="com.tipray.bean.User">
+        update tbl_user set
+            `role_id`           = IFNULL(#{role.id}, 2),
+            `password`          = #{password},
+            `name`              = #{name},
+            `phone`             = #{phone},
+            `identity_card`     = #{identityCard},
+            `remark`            = IFNULL(#{remark},''),
+            `is_invalid`        = 0
+        where `account`         = #{account}
+    </update>
+
+    <delete id="deleteByAccount" parameterType="java.lang.String">
+        delete from tbl_user where `account` = #{account}
+    </delete>
+
 </mapper>

@@ -126,22 +126,22 @@ $(function() {
                 return;
             }
 
-            if (!isPhone(phone)) {
-                layer.alert('电话号码不正确！', { icon: 5 }, function(index2) {
-                    layer.close(index2);
-                    $("#phone").select();
-                });
-                return;
-            }
-
-            if (!isIdCard(identityCard)) {
-                layer.alert('身份证号不正确！', { icon: 5 }, function(index2) {
-                    layer.close(index2);
-                    // $("#identityCard").focus();
-                    $("#identityCard").select();
-                });
-                return;
-            }
+            // if (!isPhone(phone)) {
+            //     layer.alert('电话号码不正确！', { icon: 5 }, function(index2) {
+            //         layer.close(index2);
+            //         $("#phone").select();
+            //     });
+            //     return;
+            // }
+            //
+            // if (!isIdCard(identityCard)) {
+            //     layer.alert('身份证号不正确！', { icon: 5 }, function(index2) {
+            //         layer.close(index2);
+            //         // $("#identityCard").focus();
+            //         $("#identityCard").select();
+            //     });
+            //     return;
+            // }
 
 
             $.post(url, param,

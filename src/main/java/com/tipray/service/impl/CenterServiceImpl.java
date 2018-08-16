@@ -28,11 +28,23 @@ public class CenterServiceImpl implements CenterService {
 	@Override
 	public Center addCenter(Center center) throws ServiceException {
 		if (center != null) {
+		    String name = center.getName();
+            if (name == null || name.trim().isEmpty()) {
+                throw new IllegalArgumentException("中心名称为空！");
+            }
 			// 自动生成rc4密码
 			center.setRc4(RC4Util.createBinaryKey());
 			byte[] rc4Version = { 1 };
 			center.setRc4Version(rc4Version);
-			centerDao.add(center);
+			Integer count = centerDao.countByCenterName(name);
+            if (count == null || count == 0) {
+                centerDao.add(center);
+            } else if (count == 1) {
+                centerDao.updateByCenterName(center);
+            } else {
+                centerDao.deleteByCenterName(name);
+                centerDao.add(center);
+            }
 			FtpConfig ftpConfig = center.getFtpConfig();
 			ftpConfig.setCenterId(center.getId());
 			centerDao.addFtp(ftpConfig);

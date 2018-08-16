@@ -10,15 +10,22 @@ import java.io.Serializable;
  */
 public class AppInfo implements Serializable {
     private static final long serialVersionUID = 1L;
-    private Integer center_id;
+    /**
+     * 用户中心ID
+     */
+    private int center_id;
+    /**
+     * 用户中心名称
+     */
+    private String center_name = "";
     /**
      * 用户中心ip
      */
-    private String ip;
+    private String ip = "";
     /**
      * 用户中心Web服务器port
      */
-    private Integer port;
+    private int port;
     /**
      * 升级状态（0 不升级，1 升级）
      */
@@ -28,12 +35,23 @@ public class AppInfo implements Serializable {
      */
     private AppUpgrade upgrade_info;
 
-    public Integer getCenter_id() {
+    public int getCenter_id() {
         return center_id;
     }
 
-    public void setCenter_id(Integer center_id) {
+    public void setCenter_id(int center_id) {
         this.center_id = center_id;
+    }
+
+    public String getCenter_name() {
+        return center_name;
+    }
+
+    public void setCenter_name(String center_name) {
+        if (center_name == null) {
+            return;
+        }
+        this.center_name = center_name;
     }
 
     public String getIp() {
@@ -41,14 +59,17 @@ public class AppInfo implements Serializable {
     }
 
     public void setIp(String ip) {
+        if (ip == null) {
+            return;
+        }
         this.ip = ip;
     }
 
-    public Integer getPort() {
+    public int getPort() {
         return port;
     }
 
-    public void setPort(Integer port) {
+    public void setPort(int port) {
         this.port = port;
     }
 
@@ -72,10 +93,19 @@ public class AppInfo implements Serializable {
     public String toString() {
         final StringBuffer sb = new StringBuffer("AppInfo{");
         sb.append("center_id=").append(center_id);
-        sb.append(", ip='").append(ip).append('\'');
-        sb.append(", port=").append(port);
+        if (!center_name.isEmpty()) {
+            sb.append(", center_name='").append(center_name).append('\'');
+        }
+        if (!ip.isEmpty()) {
+            sb.append(", ip='").append(ip).append('\'');
+        }
+        if (port > 0) {
+            sb.append(", port=").append(port);
+        }
         sb.append(", update_status=").append(update_status);
-        sb.append(", upgrade_info=").append(upgrade_info);
+        if (upgrade_info != null) {
+            sb.append(", upgrade_info=").append(upgrade_info);
+        }
         sb.append('}');
         return sb.toString();
     }

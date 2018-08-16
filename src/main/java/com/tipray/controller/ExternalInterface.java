@@ -319,10 +319,16 @@ public class ExternalInterface {
                 centerId = 0L;
             } else if (centerNum == 1) {
                 centerId = centerIds.get(0);
-                assignVer = appverService.getAssignVerByCenterIdAndSystem(centerId, system);
+                String ver = appverService.getAssignVerByCenterIdAndSystem(centerId, system);
+                if (ver != null) {
+                    assignVer = ver;
+                }
             } else {
                 if (centerId > 0 && centerIds.contains(centerId)) {
-                    assignVer = appverService.getAssignVerByCenterIdAndSystem(centerId, system);
+                    String ver = appverService.getAssignVerByCenterIdAndSystem(centerId, system);
+                    if (ver != null) {
+                        assignVer = ver;
+                    }
                 } else {
                     if (StringUtil.isEmpty(assignVer)) {
                         if (centerId == 0) {
@@ -340,8 +346,6 @@ public class ExternalInterface {
             AppInfo appInfo = new AppInfo();
             if (centerId > 0) {
                 appInfo = appdevService.getCenterWebAddr(centerId);
-            } else {
-                appInfo.setCenter_id(0);
             }
             if (assignVer == null) {
                 logger.warn(AppInfoObtainErrorEnum.UP_VER_NULL.msg());
@@ -389,5 +393,4 @@ public class ExternalInterface {
             return ResponseMsgUtil.exception(e);
         }
     }
-
 }
