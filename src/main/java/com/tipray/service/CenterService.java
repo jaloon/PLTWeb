@@ -12,7 +12,7 @@ public interface CenterService {
 	/**
 	 * 新增用户中心
 	 * 
-	 * @param center
+	 * @param center {@link Center}
 	 * @throws ServiceException
 	 */
 	Center addCenter(Center center) throws ServiceException;
@@ -20,69 +20,76 @@ public interface CenterService {
 	/**
 	 * 修改用户中心信息
 	 * 
-	 * @param center
+	 * @param center {@link Center}
 	 */
 	Center updateCenter(Center center) throws ServiceException;
 
 	/**
 	 * 根据Id删除用户中心
 	 * 
-	 * @param center
+	 * @param id 用户中心ID
 	 */
 	void deleteCenterById(Long id) throws ServiceException;
 
 	/**
 	 * 根据Id获取用户中心信息
 	 * 
-	 * @param id
-	 * @return
+	 * @param id 用户中心ID
+	 * @return {@link Center}
 	 */
 	Center getCenterById(Long id);
 
 	/**
 	 * 根据用户中心名称获取用户中心信息
 	 * 
-	 * @param centerName
-	 * @return
+	 * @param centerName 用户中心名称
+	 * @return {@link Center}
 	 */
 	Center getByName(String centerName);
+
+    /**
+     * 根据ID获取用户中心名称
+     * @param id 用户中心ID
+     * @return 用户中心名称
+     */
+	String getCenterNameById(Long id);
 
 	/**
 	 * 获取所有用户中心信息
 	 * 
-	 * @return
+	 * @return {@link Center}
 	 */
 	List<Center> findAllCenters();
 
 	/**
 	 * 获取中心数量
 	 * 
-	 * @param center
-	 * @return
+	 * @param center {@link Center}
+	 * @return 中心数量
 	 */
 	long countCenter(Center center);
 
 	/**
 	 * 分页查询中心列表
 	 * 
-	 * @param center
-	 * @param page
-	 * @return
+	 * @param center {@link Center}
+	 * @param page {@link Page}
+	 * @return {@link Center}
 	 */
 	List<Center> findByPage(Center center, Page page);
 
 	/**
 	 * 分页查询中心列表
 	 * 
-	 * @param center
-	 * @param page
-	 * @return
+	 * @param center {@link Center}
+	 * @param page {@link Page}
+	 * @return {@link Center}
 	 */
 	GridPage<Center> findcenterForPage(Center center, Page page);
 
     /**
      * 获取用户中心列表
-     * @return
+     * @return {@link Center}
      */
 	List<Center> getCenterList();
 

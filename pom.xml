@@ -18,7 +18,7 @@
         <log4j.version>1.2.17</log4j.version>
         <javasimon.version>3.4.0</javasimon.version>
         <maven.test.skip>true</maven.test.skip>
-        <java.compiler>1.7</java.compiler>
+        <java.compiler>1.8</java.compiler>
         <webroot.path>src/main/webapp</webroot.path>
 
         <mf.build>1001</mf.build>
@@ -27,13 +27,13 @@
         <company.url>http://www.pltone.com</company.url>
         <maven.build.timestamp.format>MMddHHmm</maven.build.timestamp.format>
     </properties>
-    <repositories>
-        <repository><!-- 配置公司内部配置的maven中央库 -->
-            <id>public-tiprays</id>
-            <name>Public tiprays Repositories</name>
-            <url>http://192.168.28.146:8081/nexus/content/groups/public-tiprays</url>
-        </repository>
-    </repositories>
+    <!--<repositories>-->
+        <!--<repository>&lt;!&ndash; 配置公司内部配置的maven中央库 &ndash;&gt;-->
+            <!--<id>public-tiprays</id>-->
+            <!--<name>Public tiprays Repositories</name>-->
+            <!--<url>http://192.168.28.146:8081/nexus/content/groups/public-tiprays</url>-->
+        <!--</repository>-->
+    <!--</repositories>-->
     <dependencies>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
@@ -381,6 +381,13 @@
             <version>1.1.1</version>
         </dependency>
         <!-- cxf config end -->
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-email</artifactId>
+            <version>1.5</version>
+        </dependency>
+
     </dependencies>
     <build>
         <finalName>PLTWeb</finalName><!-- war包文件名 -->
@@ -476,8 +483,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>${java.compiler}</source>
+                    <target>${java.compiler}</target>
                     <encoding>UTF-8</encoding>
                     <compilerArguments><!-- 配置本地jar库 -->
                         <extdirs>${webroot.path}\WEB-INF\lib</extdirs>

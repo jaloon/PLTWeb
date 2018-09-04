@@ -82,6 +82,11 @@ public class CenterServiceImpl implements CenterService {
 	}
 
 	@Override
+	public String getCenterNameById(Long id) {
+		return id == null ? null : centerDao.getCenterNameById(id);
+	}
+
+	@Override
 	public List<Center> findAllCenters() {
 		return centerDao.findAll();
 	}

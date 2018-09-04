@@ -108,6 +108,10 @@
 		select <include refid="select_colums"></include>  
 		from tbl_center c, tbl_ftp f where c.is_invalid=0 and c.id = f.center_id and c.name = #{centerName}
 	</select>
+
+	<select id="getCenterNameById" parameterType="java.lang.Long" resultType="java.lang.String">
+        select `name` from tbl_center where is_invalid=0 and id = #{id};
+    </select>
 	
 	<select id="count" parameterType="com.tipray.bean.Center" resultType="java.lang.Long">
 		select count(*) from tbl_center where is_invalid = 0 and id > 0

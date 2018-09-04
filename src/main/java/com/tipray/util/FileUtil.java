@@ -80,9 +80,9 @@ public class FileUtil {
 	public static String getAbsolutePath(String path) {
 		File file = new File(path);
 		try {
-			return file.getCanonicalPath().toString();
+			return file.getCanonicalPath();
 		} catch (IOException e) {
-			return file.getAbsolutePath().toString();
+			return file.getAbsolutePath();
 		}
 	}
 
@@ -444,7 +444,7 @@ public class FileUtil {
 		if (path != null) {
 			try {
 				File file = new File(path);
-				createPath(file.getParent().toString());
+				createPath(file.getParent());
 				if (!file.exists()) {
 					file.createNewFile();
 				}
@@ -919,4 +919,56 @@ public class FileUtil {
 			}
 		}
 	}
+
+	/**
+	 * 根据文件名在指定目录中查找文件
+	 * @param dir {@link File} 指定目录
+	 * @param filename {@link String} 文件名
+	 * @return {@link String} 文件绝对路径
+	 */
+	public static String findFilePath(File dir, String filename) {
+		if (!dir.exists()) {
+			return null;
+		}
+		if (dir.isFile()) {
+			if (dir.getName().equals(filename)) {
+				return dir.getAbsolutePath();
+			}
+			return null;
+		}
+		if (dir.isDirectory()) {
+			File[] files = dir.listFiles();
+            return findFilePath(files, filename);
+		}
+		return null;
+	}
+
+    /**
+     * 根据文件名在指定目录或文件中查找文件
+     * @param files {@link File[]} 指定目录或文件
+     * @param filename {@link String} 文件名
+     * @return {@link String} 文件绝对路径
+     */
+	private static String findFilePath(File[] files, String filename) {
+        if (files == null) {
+            return null;
+        }
+        for (File file : files) {
+            if (file.isFile()) {
+                if (file.getName().equals(filename)) {
+                    return file.getAbsolutePath();
+                }
+                continue;
+            }
+            if (file.isDirectory()) {
+                File[] childFiles = file.listFiles();
+                String path = findFilePath(childFiles, filename);
+                if (path == null) {
+                    continue;
+                }
+                return path;
+            }
+        }
+        return null;
+    }
 }

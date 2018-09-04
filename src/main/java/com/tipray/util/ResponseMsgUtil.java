@@ -113,6 +113,16 @@ public class ResponseMsgUtil {
     }
 
     /**
+     * 错误回复（邮件通知错误）
+     *
+     * @param emailError {@link EmailErrorEnum} 邮件通知错误
+     * @return {@link ResponseMsg}
+     */
+    public static ResponseMsg error(EmailErrorEnum emailError) {
+        return error(ErrorTagConst.EMAIL_ERROR_TAG, emailError.code(), emailError.msg());
+    }
+
+    /**
      * 错误回复（权限错误）
      *
      * @param permissionError {@link PermissionErrorEnum} 权限错误

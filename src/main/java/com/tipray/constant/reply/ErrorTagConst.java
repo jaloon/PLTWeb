@@ -72,7 +72,10 @@ public class ErrorTagConst {
 	public static final byte LOCK_OPEN_RESET_ERROR_TAG = 43;
 	/** 轨迹查询错误标志位 */
 	public static final byte FIND_TRACK_ERROR_TAG = 46;
-	
+
+    /** 邮件通知错误标志位 */
+    public static final byte EMAIL_ERROR_TAG = 50;
+
 	/** 异常信息标志位 */
 	public static final byte EXCEPTION_MESSAGE_TAG = Byte.MAX_VALUE;
 	

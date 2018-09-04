@@ -52,15 +52,13 @@
    	</context:component-scan>  
 
    	<!-- 对模型视图名称的解析，即在模型视图名称添加前后缀 -->  
-   	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/" p:suffix="" />  
-       
-   	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" p:defaultEncoding="utf-8" />
-   	
-   	<bean id="stringMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
-        <property name="supportedMediaTypes">
-            <list>
-                <value>text/plain;charset=UTF-8</value>
-            </list>
-        </property>
-    </bean>
+   	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/" p:suffix="" />
+
+	<!-- 文件上传解析器 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 文件总大小1024*1024*20 -->
+		<property name="maxUploadSize" value="20971520"/>
+		<!-- 编码方式 -->
+		<property name="defaultEncoding" value="utf-8"/>
+	</bean>
  </beans>

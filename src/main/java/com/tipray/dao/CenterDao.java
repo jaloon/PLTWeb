@@ -38,6 +38,13 @@ public interface CenterDao extends BaseDao<Center> {
 	Center getByName(String centerName);
 
 	/**
+	 * 根据ID获取用户中心名称
+	 * @param id 用户中心ID
+	 * @return 用户中心名称
+	 */
+	String getCenterNameById(Long id);
+
+	/**
 	 * 添加ftp配置信息
 	 * 
 	 * @param ftpConfig
