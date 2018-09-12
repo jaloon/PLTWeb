@@ -1,12 +1,12 @@
 /**
  * 空对象判断
- * @param {*} o
+ * @param {*} obj
  */
-function isNull(o) {
-    if (o == undefined || o == null || o == "") {
+function isNull(obj) {
+    if (obj === null || obj === undefined) {
         return true;
     }
-    return false;
+    return typeof(obj) === "string" && obj === "";
 }
 
 /**

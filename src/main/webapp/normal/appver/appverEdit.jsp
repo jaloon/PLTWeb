@@ -32,6 +32,12 @@
                     <td><input type="text" class="editInfo" value="${appVer.centerName}" readonly></td>
                 </tr>
                 <tr>
+                    <td>应用标识:</td>
+                    <td>
+                        <input type="text" class="editInfo" value="${appVer.appid}" readonly>
+                    </td>
+                </tr>
+                <tr>
                     <td>手机系统:</td>
                     <td>
                         <input type="text" class="editInfo" value="${appVer.system}" readonly>
@@ -46,6 +52,43 @@
                     <td><input type="text" class="editInfo"  value="${appVer.minVer}" readonly></td>
                 </tr>
             </table>
+        </c:if>
+        <c:if test="${mode=='defaut'}">
+            <input type="hidden" id="center" value="0">
+            <table>
+                <tr>
+                    <td>应用标识:</td>
+                    <td>
+                        <input type="text" class="editInfo" id="appid" placeholder="pltone_e_seal、pltone_e_seal_accredit...">
+                    </td>
+                </tr>
+                <tr>
+                    <td>手机系统:</td>
+                    <td>
+                        <select class="editInfo" id="system" style="width: 398px;height: 28px;">
+                            <option value="Android">Android</option>
+                            <option value="iOS">iOS</option>
+                            <option value="其它">其它</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>指定版本:</td>
+                    <td>
+                        <input type="text" class="editInfo" id="assign" placeholder="版本号格式：1.1.1">
+                    </td>
+                </tr>
+                <tr>
+                    <td>最低版本:</td>
+                    <td>
+                        <input type="text" class="editInfo" id="minver" placeholder="版本号格式：1.1.1">
+                    </td>
+                </tr>
+            </table>
+            <div class="oper-zone">
+                <input type="button" id="cancel" value="取消">
+                <input type="button" id="confirm" value="确认">
+            </div>
         </c:if>
         <c:if test="${mode=='add'}">
             <table>
@@ -63,6 +106,12 @@
                                 </c:forEach>
                             </select>
                         </c:if>
+                    </td>
+                </tr>
+                <tr>
+                    <td>应用标识:</td>
+                    <td>
+                        <input type="text" class="editInfo" id="appid" placeholder="pltone_e_seal、pltone_e_seal_accredit...">
                     </td>
                 </tr>
                 <tr>
@@ -99,6 +148,12 @@
                 <tr>
                     <td>用户中心:</td>
                     <td><input type="text" class="editInfo" value="${appVer.centerName}" readonly></td>
+                </tr>
+                <tr>
+                    <td>应用标识:</td>
+                    <td>
+                        <input type="text" class="editInfo" value="${appVer.appid}" readonly>
+                    </td>
                 </tr>
                 <tr>
                     <td>手机系统:</td>

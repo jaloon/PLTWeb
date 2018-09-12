@@ -32,7 +32,7 @@ public class AppverController {
         if (id > 0) {
             appVer = appverService.getAppverById(id);
         }
-        if (Mode.EDIT.equalsIgnoreCase(mode) || Mode.ADD.equalsIgnoreCase(mode)) {
+        if (Mode.ADD.equalsIgnoreCase(mode)) {
             List<Center> centers = centerService.getCenterList();
             modelMap.put("centers", centers);
         }
@@ -81,8 +81,8 @@ public class AppverController {
 
     @RequestMapping(value = "isExist.do")
     @ResponseBody
-    public Boolean isAppConfigExist(Long centerId, String system) {
-        return appverService.isAppverExist(centerId, system);
+    public Boolean isAppConfigExist(Long centerId, String appid, String system) {
+        return appverService.isAppverExist(centerId, appid, system);
     }
 
     @PermissionAnno("appverManage")
@@ -93,4 +93,10 @@ public class AppverController {
         return gridPage;
     }
 
+    @PermissionAnno("appverManage")
+    @RequestMapping(value = "getDefaultVer.do")
+    @ResponseBody
+    public List<AppVer> getDefaultVer() {
+        return appverService.getDefaultVer();
+    }
 }

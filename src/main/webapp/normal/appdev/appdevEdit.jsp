@@ -96,6 +96,12 @@
                 <td><input type="text" class="editInfo" value="${appdev.uuid}" readonly></td>
             </tr>
             <tr>
+                <td>应用标识:</td>
+                <td>
+                    <input type="text" class="editInfo" value="${appdev.appid}" readonly>
+                </td>
+            </tr>
+            <tr>
                 <td>手机系统:</td>
                 <td>
                     <input type="text" class="editInfo" value="${appdev.system}" readonly>
@@ -142,6 +148,12 @@
                 <td>手机UUID:</td>
                 <td>
                     <input type="text" class="editInfo" id="uuid">
+                </td>
+            </tr>
+            <tr>
+                <td>应用标识:</td>
+                <td>
+                    <input type="text" class="editInfo" id="appid" placeholder="pltone_e_seal、pltone_e_seal_accredit...">
                 </td>
             </tr>
             <tr>
@@ -204,6 +216,12 @@
                 <td>手机UUID:</td>
                 <td>
                     <input type="text" class="editInfo" id="uuid" value="${appdev.uuid}" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td>应用标识:</td>
+                <td>
+                    <input type="text" class="editInfo" value="${appdev.appid}" readonly>
                 </td>
             </tr>
             <tr>

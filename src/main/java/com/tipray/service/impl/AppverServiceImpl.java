@@ -4,6 +4,7 @@ import com.tipray.bean.AppInfo;
 import com.tipray.bean.AppVer;
 import com.tipray.bean.GridPage;
 import com.tipray.bean.Page;
+import com.tipray.bean.ResponseMsg;
 import com.tipray.core.exception.ServiceException;
 import com.tipray.dao.AppverDao;
 import com.tipray.service.AppverService;
@@ -35,14 +36,21 @@ public class AppverServiceImpl implements AppverService {
             return null;
         }
         appverDao.add(appVer);
-        try {
-            AppInfo appInfo = appverDao.getCenterWebAddrByCenterId(appVer.getCenterId());
-            String url = new StringBuffer().append("https://").append(appInfo.getIp()).append(':')
-                    .append(appInfo.getPort()).append("/api/appver/add").toString();
-            FormBody formBody = new FormBody.Builder().add("appver", JSONUtil.stringify(appVer)).build();
-            OkHttpUtil.post(url, formBody);
-        } catch (Exception e) {
-            logger.error("向用户中心同步新增APP版本信息异常！", e);
+        Long centerId = appVer.getCenterId();
+        if (centerId > 0) {
+            try {
+                AppInfo appInfo = appverDao.getCenterWebAddrByCenterId(centerId);
+                String url = new StringBuffer().append("https://").append(appInfo.getIp()).append(':')
+                        .append(appInfo.getPort()).append("/api/appver/add").toString();
+                FormBody formBody = new FormBody.Builder().add("appver", JSONUtil.stringify(appVer)).build();
+                String reply = OkHttpUtil.post(url, formBody);
+                ResponseMsg responseMsg = JSONUtil.parseToObject(reply, ResponseMsg.class);
+                if (responseMsg.getId() > 0) {
+                    logger.warn("向用户中心[{}]同步新增APP版本信息失败：{}", centerId, responseMsg.getMsg());
+                }
+            } catch (Exception e) {
+                logger.error("向用户中心[" + centerId + "]同步新增APP版本信息异常！", e);
+            }
         }
         return appVer;
     }
@@ -53,14 +61,22 @@ public class AppverServiceImpl implements AppverService {
             return null;
         }
         appverDao.update(appVer);
+        int centerId = 0;
         try {
             AppInfo appInfo = appverDao.getCenterWebAddrById(appVer.getId());
-            String url = new StringBuffer().append("https://").append(appInfo.getIp()).append(':')
-                    .append(appInfo.getPort()).append("/api/appver/update").toString();
-            FormBody formBody = new FormBody.Builder().add("appver", JSONUtil.stringify(appVer)).build();
-            OkHttpUtil.post(url, formBody);
+            if (appInfo != null) {
+                centerId = appInfo.getCenter_id();
+                String url = new StringBuffer().append("https://").append(appInfo.getIp()).append(':')
+                        .append(appInfo.getPort()).append("/api/appver/update").toString();
+                FormBody formBody = new FormBody.Builder().add("appver", JSONUtil.stringify(appVer)).build();
+                String reply = OkHttpUtil.post(url, formBody);
+                ResponseMsg responseMsg = JSONUtil.parseToObject(reply, ResponseMsg.class);
+                if (responseMsg.getId() > 0) {
+                    logger.warn("向用户中心[{}]同步新增APP版本信息失败：{}", centerId, responseMsg.getMsg());
+                }
+            }
         } catch (Exception e) {
-            logger.error("向用户中心同步更新APP版本信息异常！", e);
+            logger.error("向用户中心[" + centerId + "]同步更新APP版本信息异常！", e);
         }
         return appVer;
     }
@@ -72,27 +88,45 @@ public class AppverServiceImpl implements AppverService {
         }
         AppInfo appInfo = appverDao.getCenterWebAddrById(id);
         appverDao.delete(id);
-        try {
-            String url = new StringBuffer().append("https://").append(appInfo.getIp()).append(':')
-                    .append(appInfo.getPort()).append("/api/appver/delete").toString();
-            FormBody formBody = new FormBody.Builder().add("id", id.toString()).build();
-            OkHttpUtil.post(url, formBody);
-        } catch (Exception e) {
-            logger.error("向用户中心同步删除APP版本信息异常！", e);
+        if (appInfo != null) {
+            int centerId = appInfo.getCenter_id();
+            try {
+                String url = new StringBuffer().append("https://").append(appInfo.getIp()).append(':')
+                        .append(appInfo.getPort()).append("/api/appver/delete").toString();
+                FormBody formBody = new FormBody.Builder().add("id", id.toString()).build();
+                String reply = OkHttpUtil.post(url, formBody);
+                ResponseMsg responseMsg = JSONUtil.parseToObject(reply, ResponseMsg.class);
+                if (responseMsg.getId() > 0) {
+                    logger.warn("向用户中心[{}]同步删除APP版本信息失败：{}", centerId, responseMsg.getMsg());
+                }
+            } catch (Exception e) {
+                logger.error("向用户中心[" + centerId + "]同步删除APP版本信息异常！", e);
+            }
         }
     }
 
     @Override
     public AppVer getAppverById(Long id) {
-        return null == id ? null : appverDao.getById(id);
+        if (id == null) {
+            return null;
+        }
+        AppVer appVer = appverDao.getById(id);
+        if (appVer.getCenterName() == null) {
+            Long centerId = appVer.getCenterId();
+            if (!centerId.equals(0L)) {
+                return null;
+            }
+            appVer.setCenterName("所有中心");
+        }
+        return appVer;
     }
 
     @Override
-    public boolean isAppverExist(Long centerId, String system) {
-        if (centerId == null || system == null) {
+    public boolean isAppverExist(Long centerId, String appid, String system) {
+        if (centerId == null || appid == null || system == null) {
            throw new IllegalArgumentException("参数为空！");
         }
-        Integer num = appverDao.countCenterAppVer(centerId, system);
+        Integer num = appverDao.countCenterAppVer(centerId, appid, system);
         if (num == null) {
             return false;
         }
@@ -100,8 +134,12 @@ public class AppverServiceImpl implements AppverService {
     }
 
     @Override
-    public String getAssignVerByCenterIdAndSystem(Long centerId, String system) {
-        return appverDao.getAssignVerByCenterIdAndSystem(centerId, system);
+    public String getAssignVerByAppver(Long centerId, String appid, String system) {
+        AppVer appVer = new AppVer();
+        appVer.setCenterId(centerId);
+        appVer.setAppid(appid);
+        appVer.setSystem(system);
+        return appverDao.getAssignVerByAppver(appVer);
     }
 
     @Override
@@ -124,5 +162,10 @@ public class AppverServiceImpl implements AppverService {
         long records = countAppver(appVer);
         List<AppVer> list = findByPage(appVer, page);
         return new GridPage<>(list, records, page.getPageId(), page.getRows(), list.size(), appVer);
+    }
+
+    @Override
+    public List<AppVer> getDefaultVer() {
+        return appverDao.getDefaultVer();
     }
 }

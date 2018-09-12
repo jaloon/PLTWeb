@@ -4,14 +4,14 @@ var deleteAppdev;
 $(function () {
     dispatch = function (mode, id) {
         var title = "添加APP设备信息";
-        var h = "451px";
+        var h = "487px";
         if ("edit" == mode) {
             title = "修改APP设备信息";
-            h = "451px";
+            // h = "451px";
         }
         if ("view" == mode) {
             title = "查看APP设备信息";
-            h = "400px";
+            h = "436px";
         }
         layer.open({
             type: 2,
@@ -44,7 +44,22 @@ $(function () {
                     }
                 },
                 "json"
-            );
+            ).fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                if (XMLHttpRequest.readyState == 4) {
+                    var http_status = XMLHttpRequest.status;
+                    if (http_status == 0 || http_status > 600) {
+                        location.reload(true);
+                    } else if (http_status == 200) {
+                        if (textStatus == "parsererror") {
+                            layer.alert("应答数据格式解析错误！")
+                        } else {
+                            layer.alert("http response error: " + textStatus)
+                        }
+                    } else {
+                        layer.alert("http connection error: status[" + http_status + "], " + XMLHttpRequest.statusText)
+                    }
+                }
+            });
         });
     }
 
@@ -55,9 +70,7 @@ $(function () {
         $.post(
             "../../manage/appdev/ajaxFindForPage.do",
             "uuid=" + uuid + "&owner=" + owner + "&pageId=" + pageId + "&startRow=" + startRow + "&rows=" + rows,
-            function (data) {
-                var gridPage = eval(data);
-
+            function (gridPage) {
                 var maxIndex = $("#page_id option:last").index(); //获取Select最大的索引值
                 var len = maxIndex + 1 - gridPage.total;
                 if (len > 0) {
@@ -81,6 +94,7 @@ $(function () {
                     var appdev = appdevs[i];
                     tableData += "<tr>" +
                         "<td class=\"appdev-uuid\">" + appdev.uuid + "</td>" +
+                        "<td class=\"appdev-appid\">" + appdev.appid + "</td>" +
                         "<td class=\"appdev-system\">" + appdev.system + "</td>" +
                         "<td class=\"appdev-model\">" + appdev.model + "</td>" +
                         "<td class=\"appdev-ver\">" + appdev.currentVer + "</td>" +
@@ -121,7 +135,7 @@ $(function () {
     showList("", "", 1);
 
     $("#search_type").change(function () {
-        $("#search_text").empty();
+        $("#search_text").val("");
         var type = $("#search_type").val();
         if (type == 0) {
             $("#search_text").attr("readonly", true);
@@ -143,7 +157,7 @@ $(function () {
                 });
                 return;
             }
-        } else {
+        } else if (type == 2) {
             owner = $("#search_text").val();
             if (isNull(owner)) {
                 layer.alert('请输入要查询的机主姓名！', {icon: 6}, function (index2) {

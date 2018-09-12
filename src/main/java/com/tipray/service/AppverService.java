@@ -42,18 +42,20 @@ public interface AppverService {
      * 用户中心APP版本信息是否存在
      *
      * @param centerId 用户中心ID
+     * @param appid    应用标识
      * @param system   手机系统
      * @return APP版本信息数
      */
-    boolean isAppverExist(Long centerId, String system);
+    boolean isAppverExist(Long centerId, String appid, String system);
 
     /**
      * 根据用户中心ID和系统类型获取指定版本号
      * @param centerId 用户中心ID
+     * @param appid 应用标识
      * @param system   手机系统
      * @return 指定版本号
      */
-    String getAssignVerByCenterIdAndSystem(Long centerId, String system);
+    String getAssignVerByAppver(Long centerId, String appid, String system);
 
     /**
      * 获取所有APP版本信息
@@ -88,4 +90,10 @@ public interface AppverService {
      */
     GridPage<AppVer> findAppverForPage(AppVer appVer, Page page);
 
+    /**
+     * 获取缺省版本
+     *
+     * @return
+     */
+    List<AppVer> getDefaultVer();
 }

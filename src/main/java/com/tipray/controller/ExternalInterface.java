@@ -1,17 +1,35 @@
 package com.tipray.controller;
 
-import com.tipray.bean.*;
-import com.tipray.constant.reply.*;
-import com.tipray.service.*;
-import com.tipray.util.*;
+import com.tipray.bean.AppDev;
+import com.tipray.bean.AppInfo;
+import com.tipray.bean.AppSync;
+import com.tipray.bean.AppUpgrade;
+import com.tipray.bean.Center;
+import com.tipray.bean.Device;
+import com.tipray.bean.ResponseMsg;
+import com.tipray.constant.reply.AppInfoObtainErrorEnum;
+import com.tipray.constant.reply.BarrierInfoObtainErrorEnum;
+import com.tipray.constant.reply.CenterInfoObtainErrorEnum;
+import com.tipray.constant.reply.CenterRc4ObtainErrorEnum;
+import com.tipray.constant.reply.WebAddrObtainErrorEnum;
+import com.tipray.service.AppdevService;
+import com.tipray.service.AppverService;
+import com.tipray.service.CenterService;
+import com.tipray.service.DeviceService;
+import com.tipray.util.EmptyObjectUtil;
+import com.tipray.util.HttpServletUtil;
+import com.tipray.util.JSONUtil;
+import com.tipray.util.RC4Util;
+import com.tipray.util.ResponseMsgUtil;
+import com.tipray.util.StringUtil;
+import com.tipray.util.VersionUtil;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +43,7 @@ import java.util.Properties;
  *
  * @author chenlong
  */
-@Controller
+@RestController
 @RequestMapping("api")
 public class ExternalInterface {
     private final Logger logger = LoggerFactory.getLogger(ExternalInterface.class);
@@ -47,7 +65,6 @@ public class ExternalInterface {
      * @return 用户中心的设备列表
      */
     @RequestMapping(value = "deviceSync.do")
-    @ResponseBody
     public List<Device> deviceSync(Long id) {
         logger.info("用户中心【{}】同步设备信息，from: {}", id, HttpServletUtil.getHost(request));
         List<Device> devices = deviceService.findByCenterId(id);
@@ -61,7 +78,6 @@ public class ExternalInterface {
      * @return 用户中心的APP配置信息列表
      */
     @RequestMapping(value = "appSync.do")
-    @ResponseBody
     public AppSync appSync(Long id) {
         logger.info("用户中心【{}】同步APP配置信息，from: {}", id, HttpServletUtil.getHost(request));
         AppSync appsync = appdevService.findAppSync(id);
@@ -76,7 +92,6 @@ public class ExternalInterface {
      * @return {@link ResponseMsg} 用户中心IP地址等信息
      */
     @RequestMapping(value = "getCenterInfo.do")
-    @ResponseBody
     public ResponseMsg getCenterInfo(Integer id, Integer ver) {
         logger.info("设备【{}】请求用户中心信息，ver: {}, from: {}", id, ver, HttpServletUtil.getHost(request));
         if (id == null) {
@@ -119,7 +134,6 @@ public class ExternalInterface {
      * @return {@link ResponseMsg} 用户中心IP地址等信息
      */
     @RequestMapping(value = "getCenterRc4.do")
-    @ResponseBody
     public ResponseMsg getCenterRc4(Integer id, Integer ver) {
         logger.info("请求用户中心【{}】的RC4秘钥信息，ver: {}, from: {}", id, ver, HttpServletUtil.getHost(request));
         if (id == null) {
@@ -161,7 +175,6 @@ public class ExternalInterface {
      * @return {@link ResponseMsg} 道闸接口信息
      */
     @RequestMapping(value = "getBarrierInfo.do")
-    @ResponseBody
     public ResponseMsg getBarrierInfo(Integer id, Integer ver) {
         logger.info("请求用户中心【{}】的道闸接口信息，ver: {}, from: {}", id, ver, HttpServletUtil.getHost(request));
         if (id == null) {
@@ -202,7 +215,6 @@ public class ExternalInterface {
      * @return {@link ResponseMsg} 所有用户中心ID和名称信息
      */
     @RequestMapping(value = "getAllCenter.do")
-    @ResponseBody
     public ResponseMsg getAllCenter() {
         logger.info("客户端【{}】请求所有用户中心ID和名称，from: {}",
                 request.getHeader("User-Agent"), HttpServletUtil.getHost(request));
@@ -223,7 +235,6 @@ public class ExternalInterface {
      * @return {@link ResponseMsg} IP地址和端口号
      */
     @RequestMapping(value = "getIPAndPort.do")
-    @ResponseBody
     public ResponseMsg getIPAndPort(Integer id) {
         logger.info("请求用户中心【{}】的IP地址和端口号，from: {}", id, HttpServletUtil.getHost(request));
         if (id == null) {
@@ -256,7 +267,6 @@ public class ExternalInterface {
      * @return {@link ResponseMsg} 手机APP配置信息
      */
     @RequestMapping(value = "getAppInfo.do")
-    @ResponseBody
     public ResponseMsg getAppInfo(@RequestParam("uuid") String uuid,
                                   @RequestParam("center_id") Long centerId,
                                   @RequestParam("appid") String appid,
@@ -296,20 +306,21 @@ public class ExternalInterface {
                 return ResponseMsgUtil.error(AppInfoObtainErrorEnum.VERSION_INVALID);
             }
 
-            if (appdevService.isAppdevExist(uuid)) {
+            if (appdevService.isAppdevExist(uuid, appid)) {
                 // 更新当前版本和型号
-                appdevService.updateModelAndCurrentVerByUuid(model, curver, uuid);
+                appdevService.updateModelAndCurrentVerByUuidAndAppid(model, curver, uuid, appid);
             } else {
                 // APP设备记录不存在，添加一条记录
                 AppDev appDev = new AppDev();
                 appDev.setUuid(uuid);
+                appDev.setAppid(appid);
                 appDev.setSystem(system);
                 appDev.setModel(model);
                 appDev.setCurrentVer(curver);
                 appdevService.addAppdev(appDev);
             }
-            String assignVer = appverService.getAssignVerByCenterIdAndSystem(0L, system);
-            List<Long> centerIds = appdevService.findCenterIdsByUuid(uuid);
+            String assignVer = appverService.getAssignVerByAppver(0L, appid, system);
+            List<Long> centerIds = appdevService.findCenterIdsByUuidAndAppid(uuid, appid);
             int centerNum = centerIds.size();
             if (centerNum == 0) {
                 if (StringUtil.isEmpty(assignVer)) {
@@ -319,13 +330,13 @@ public class ExternalInterface {
                 centerId = 0L;
             } else if (centerNum == 1) {
                 centerId = centerIds.get(0);
-                String ver = appverService.getAssignVerByCenterIdAndSystem(centerId, system);
+                String ver = appverService.getAssignVerByAppver(centerId, appid, system);
                 if (ver != null) {
                     assignVer = ver;
                 }
             } else {
                 if (centerId > 0 && centerIds.contains(centerId)) {
-                    String ver = appverService.getAssignVerByCenterIdAndSystem(centerId, system);
+                    String ver = appverService.getAssignVerByAppver(centerId, appid, system);
                     if (ver != null) {
                         assignVer = ver;
                     }

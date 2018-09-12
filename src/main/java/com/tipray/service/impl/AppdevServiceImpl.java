@@ -1,6 +1,14 @@
 package com.tipray.service.impl;
 
-import com.tipray.bean.*;
+import com.tipray.bean.AppCenter;
+import com.tipray.bean.AppDev;
+import com.tipray.bean.AppInfo;
+import com.tipray.bean.AppSync;
+import com.tipray.bean.AppVer;
+import com.tipray.bean.Center;
+import com.tipray.bean.GridPage;
+import com.tipray.bean.Page;
+import com.tipray.bean.ResponseMsg;
 import com.tipray.core.exception.ServiceException;
 import com.tipray.dao.AppdevDao;
 import com.tipray.dao.AppverDao;
@@ -16,7 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author chenlong
@@ -46,7 +55,14 @@ public class AppdevServiceImpl implements AppdevService {
             return null;
         }
         String uuid = appDev.getUuid();
-        List<Long> ids = appdevDao.findIdsByUuid(uuid);
+        if (StringUtil.isEmpty(uuid)) {
+            throw new IllegalArgumentException("uuid为空！");
+        }
+        String appid = appDev.getAppid();
+        if (StringUtil.isEmpty(appid)) {
+            throw new IllegalArgumentException("appid为空！");
+        }
+        List<Long> ids = appdevDao.findIdsByUuidAndAppid(uuid, appid);
         if (EmptyObjectUtil.isEmptyList(ids)) {
             appdevDao.add(appDev);
         } else {
@@ -57,13 +73,13 @@ public class AppdevServiceImpl implements AppdevService {
                 return appDev;
             }
             if (size > 1) {
-                appdevDao.deleteByUuid(uuid);
+                appdevDao.deleteByUuidAndAppid(uuid, appid);
                 appdevDao.add(appDev);
             }
         }
-        List<Long> dbCenterIds = appdevDao.findCenterIdsByUuid(uuid);
+        List<Long> dbCenterIds = appdevDao.findCenterIdsByUuidAndAppid(uuid, appid);
         if (!dbCenterIds.isEmpty()) {
-            appdevDao.deleteAppCenter(uuid, dbCenterIds);
+            appdevDao.deleteAppCenter(uuid, appid, dbCenterIds);
         }
         String[] centerIdArr = StringUtil.splitStrWithComma(centerIds);
         List<Long> newCenter = new ArrayList<>();
@@ -72,16 +88,20 @@ public class AppdevServiceImpl implements AppdevService {
             newCenter.add(centerId);
         }
         if (!newCenter.isEmpty()) {
-            appdevDao.addAppCenter(uuid, newCenter);
+            appdevDao.addAppCenter(uuid, appid, newCenter);
             for (Long centerId : newCenter) {
                 try {
                     AppInfo appInfo = appdevDao.getCenterWebAddr(centerId);
                     String url = new StringBuffer().append("https://").append(appInfo.getIp()).append(':')
                             .append(appInfo.getPort()).append("/api/appdev/add").toString();
                     FormBody formBody = new FormBody.Builder().add("appdev", JSONUtil.stringify(appDev)).build();
-                    OkHttpUtil.post(url, formBody);
+                    String reply = OkHttpUtil.post(url, formBody);
+                    ResponseMsg responseMsg = JSONUtil.parseToObject(reply, ResponseMsg.class);
+                    if (responseMsg.getId() > 0) {
+                        logger.warn("向用户中心[{}]同步新增APP设备信息失败：{}", centerId, responseMsg.getMsg());
+                    }
                 } catch (Exception e) {
-                    logger.error("向用户中心[{}]同步新增APP设备信息异常！", centerId, e);
+                    logger.error("向用户中心[" + centerId + "]同步新增APP设备信息异常！", e);
                 }
             }
         }
@@ -95,7 +115,8 @@ public class AppdevServiceImpl implements AppdevService {
             return null;
         }
         appdevDao.update(appDev);
-        List<Long> dbCenterIds = appdevDao.findCenterIdsByAppdevId(appDev.getId());
+        Long appdevId = appDev.getId();
+        List<Long> dbCenterIds = appdevDao.findCenterIdsByAppdevId(appdevId);
 
         String[] centerIdArr = StringUtil.splitStrWithComma(centerIds);
         List<Long> newCenter = new ArrayList<>();
@@ -110,34 +131,42 @@ public class AppdevServiceImpl implements AppdevService {
                 newCenter.add(centerId);
             }
         }
+        appDev = appdevDao.getById(appdevId);
         String uuid = appDev.getUuid();
-        Long  id = appDev.getId();
+        String appid = appDev.getAppid();
         if (!newCenter.isEmpty()) {
-            appdevDao.addAppCenter(uuid, newCenter);
-            appDev = appdevDao.getById(id);
+            appdevDao.addAppCenter(uuid, appid, newCenter);
             for (Long centerId : newCenter) {
                 try {
                     AppInfo appInfo = appdevDao.getCenterWebAddr(centerId);
                     String url = new StringBuffer().append("https://").append(appInfo.getIp()).append(':')
                             .append(appInfo.getPort()).append("/api/appdev/add").toString();
                     FormBody formBody = new FormBody.Builder().add("appdev", JSONUtil.stringify(appDev)).build();
-                    OkHttpUtil.post(url, formBody);
+                    String reply = OkHttpUtil.post(url, formBody);
+                    ResponseMsg responseMsg = JSONUtil.parseToObject(reply, ResponseMsg.class);
+                    if (responseMsg.getId() > 0) {
+                        logger.warn("向用户中心[{}]同步新增APP设备信息失败：{}", centerId, responseMsg.getMsg());
+                    }
                 } catch (Exception e) {
-                    logger.error("向用户中心[{}]同步新增APP设备信息异常！", centerId, e);
+                    logger.error("向用户中心[" + centerId + "]同步新增APP设备信息异常！", e);
                 }
             }
         }
         if (!dbCenterIds.isEmpty()) {
-            appdevDao.deleteAppCenter(uuid, dbCenterIds);
+            appdevDao.deleteAppCenter(uuid, appid, dbCenterIds);
             for (Long centerId : dbCenterIds) {
                 try {
                     AppInfo appInfo = appdevDao.getCenterWebAddr(centerId);
                     String url = new StringBuffer().append("https://").append(appInfo.getIp()).append(':')
                             .append(appInfo.getPort()).append("/api/appdev/delete").toString();
-                    FormBody formBody = new FormBody.Builder().add("id", id.toString()).build();
-                    OkHttpUtil.post(url, formBody);
+                    FormBody formBody = new FormBody.Builder().add("id", appdevId.toString()).build();
+                    String reply = OkHttpUtil.post(url, formBody);
+                    ResponseMsg responseMsg = JSONUtil.parseToObject(reply, ResponseMsg.class);
+                    if (responseMsg.getId() > 0) {
+                        logger.warn("向用户中心[{}]同步删除APP设备信息失败：{}", centerId, responseMsg.getMsg());
+                    }
                 } catch (Exception e) {
-                    logger.error("向用户中心[{}]同步删除APP设备信息异常！", centerId, e);
+                    logger.error("向用户中心[" + centerId + "]同步删除APP设备信息异常！", e);
                 }
             }
         }
@@ -148,9 +177,13 @@ public class AppdevServiceImpl implements AppdevService {
                     String url = new StringBuffer().append("https://").append(appInfo.getIp()).append(':')
                             .append(appInfo.getPort()).append("/api/appdev/update").toString();
                     FormBody formBody = new FormBody.Builder().add("appdev", JSONUtil.stringify(appDev)).build();
-                    OkHttpUtil.post(url, formBody);
+                    String reply = OkHttpUtil.post(url, formBody);
+                    ResponseMsg responseMsg = JSONUtil.parseToObject(reply, ResponseMsg.class);
+                    if (responseMsg.getId() > 0) {
+                        logger.warn("向用户中心[{}]同步更新APP设备信息失败：{}", centerId, responseMsg.getMsg());
+                    }
                 } catch (Exception e) {
-                    logger.error("向用户中心[{}]同步更新APP设备信息异常！", centerId, e);
+                    logger.error("向用户中心[" + centerId + "]同步更新APP设备信息异常！", e);
                 }
             }
         }
@@ -158,8 +191,8 @@ public class AppdevServiceImpl implements AppdevService {
     }
 
     @Override
-    public void updateModelAndCurrentVerByUuid(String model, String currentVer, String uuid) throws ServiceException {
-        appdevDao.updateModelAndCurrentVerByUuid(model, currentVer, uuid);
+    public void updateModelAndCurrentVerByUuidAndAppid(String model, String currentVer, String uuid, String appid) throws ServiceException {
+        appdevDao.updateModelAndCurrentVerByUuidAndAppid(model, currentVer, uuid, appid);
     }
 
     @Override
@@ -174,9 +207,13 @@ public class AppdevServiceImpl implements AppdevService {
                     String url = new StringBuffer().append("https://").append(appInfo.getIp()).append(':')
                             .append(appInfo.getPort()).append("/api/appdev/delete").toString();
                     FormBody formBody = new FormBody.Builder().add("id", id.toString()).build();
-                    OkHttpUtil.post(url, formBody);
+                    String reply = OkHttpUtil.post(url, formBody);
+                    ResponseMsg responseMsg = JSONUtil.parseToObject(reply, ResponseMsg.class);
+                    if (responseMsg.getId() > 0) {
+                        logger.warn("向用户中心[{}]同步删除APP设备信息失败：{}", centerId, responseMsg.getMsg());
+                    }
                 } catch (Exception e) {
-                    logger.error("向用户中心[{}]同步删除APP设备信息异常！", centerId, e);
+                    logger.error("向用户中心[" + centerId + "]同步删除APP设备信息异常！", e);
                 }
             }
         }
@@ -188,13 +225,13 @@ public class AppdevServiceImpl implements AppdevService {
     }
 
     @Override
-    public AppDev getAppdevByUuid(String uuid) {
-        return StringUtil.isEmpty(uuid) ? null : appdevDao.getByUuid(uuid);
+    public AppDev getAppdevByUuidAndAppid(String uuid, String appid) {
+        return appdevDao.getByUuidAndAppid(uuid, appid);
     }
 
     @Override
-    public boolean isAppdevExist(String uuid) {
-        Integer num = appdevDao.countByUuid(uuid);
+    public boolean isAppdevExist(String uuid, String appid) {
+        Integer num = appdevDao.countByUuidAndAppid(uuid, appid);
         if (num == null) {
             return false;
         }
@@ -239,8 +276,8 @@ public class AppdevServiceImpl implements AppdevService {
     }
 
     @Override
-    public List<Long> findCenterIdsByUuid(String uuid) {
-        return StringUtil.isEmpty(uuid) ? Collections.emptyList() : appdevDao.findCenterIdsByUuid(uuid);
+    public List<Long> findCenterIdsByUuidAndAppid(String uuid, String appid) {
+        return appdevDao.findCenterIdsByUuidAndAppid(uuid, appid);
     }
 
     @Override

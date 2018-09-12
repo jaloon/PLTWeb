@@ -15,10 +15,11 @@ public interface AppverDao extends BaseDao<AppVer> {
      * 统计用户中心APP版本信息数
      *
      * @param centerId 用户中心ID
+     * @param appid    应用标识
      * @param system   手机系统
      * @return APP版本信息数
      */
-    Integer countCenterAppVer(@Param("centerId") Long centerId, @Param("system") String system);
+    Integer countCenterAppVer(@Param("centerId") Long centerId, @Param("appid") String appid, @Param("system") String system);
 
     /**
      * 根据用户中心ID获取APP版本信息
@@ -29,11 +30,10 @@ public interface AppverDao extends BaseDao<AppVer> {
 
     /**
      * 根据用户中心ID和系统类型获取指定版本号
-     * @param centerId 用户中心ID
-     * @param system   手机系统
+     * @param appVer {@link AppVer} centerId、appid、system
      * @return 指定版本号
      */
-    String getAssignVerByCenterIdAndSystem(@Param("centerId") Long centerId, @Param("system") String system);
+    String getAssignVerByAppver(AppVer appVer);
 
     /**
      * 根据APP版本信息记录ID获取用户中心Web地址
@@ -48,4 +48,11 @@ public interface AppverDao extends BaseDao<AppVer> {
      * @return 用户中心Web地址
      */
     AppInfo getCenterWebAddrByCenterId(Long centerId);
+
+    /**
+     * 获取缺省版本
+     *
+     * @return
+     */
+    List<AppVer> getDefaultVer();
 }

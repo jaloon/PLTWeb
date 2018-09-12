@@ -1,6 +1,9 @@
 package com.tipray.test;
 
 import com.mchange.lang.ByteUtils;
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.tipray.constant.SystemPropertyConst;
 import com.tipray.util.BytesUtil;
 import com.tipray.util.CRCUtil;
 import com.tipray.util.RC4Util;
@@ -78,5 +81,31 @@ public class ByteBufferTest {
 //		System.out.println(ByteUtils.toUnsigned((byte) 128));
 //		System.out.println(ByteUtils.toHexAscii((byte) 128));
 //		System.out.println(ByteUtils.toHexAscii((byte) -128));
+	}
+
+	public static interface LibC extends Library {
+		// int puts(String s);
+        byte GetCRC(byte[] data, int dataLen);
+	}
+
+	public static void main(String[] args) {
+        ClassLoader loader = SystemPropertyConst.class.getClassLoader();
+        String path = loader.getResource("").getPath();
+        if (path != null) {
+            System.out.println(path);
+            System.out.println(System.getProperty("user.dir"));
+
+            return;
+        }
+
+		// LibC libc = LibraryLoader.create(LibC.class).load("msvcrt");
+		// LibC libc = LibraryLoader.create(LibC.class).load(SystemPropertyConst.CRC_DLL_PATH);
+		// LibC libc = (LibC) Native.loadLibrary("msvcrt", LibC.class);
+        System.out.println(SystemPropertyConst.CRC_DLL_PATH);
+		LibC libc = (LibC) Native.loadLibrary(SystemPropertyConst.CRC_DLL_PATH, LibC.class);
+        byte[] key = ByteUtils.fromHexAscii("c7eb99c380e878f94f477566bf0dad25ba");
+		// libc.puts("Hello, World");
+		byte b = libc.GetCRC(key, 10);
+        System.out.println(b);
 	}
 }

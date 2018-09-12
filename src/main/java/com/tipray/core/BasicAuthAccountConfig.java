@@ -50,9 +50,9 @@ public class BasicAuthAccountConfig {
             synchronized (ACCOUNT_LIST) {
                 ACCOUNT_LIST.clear();
                 try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                    String mac = null;
-                    while ((mac = br.readLine()) != null) { // 使用readLine方法，一次读一行
-                        ACCOUNT_LIST.add(mac);
+                    String account = null;
+                    while ((account = br.readLine()) != null) { // 使用readLine方法，一次读一行
+                        ACCOUNT_LIST.add(account);
                     }
                     return true;
                 } catch (Exception e) {

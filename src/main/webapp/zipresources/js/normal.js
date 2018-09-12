@@ -1,1 +1,1 @@
-$(function(){$(window).resize(function(){$(".table-cont").height($(window).height()-134)}).resize();var c=document.querySelector("#table-cont");function d(a){var b=this.scrollTop;this.querySelector(".table-head").style.transform="translateY("+b+"px)"}c.addEventListener("scroll",d)});
+$(function(){$(window).resize(function(){$(".table-cont").height($(window).height()-134)}).resize();var b=document.querySelector("#table-cont");function a(d){var c=this.scrollTop;this.querySelector(".table-head").style.transform="translateY("+c+"px)"}b.addEventListener("scroll",a)});

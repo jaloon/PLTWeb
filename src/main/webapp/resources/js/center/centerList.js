@@ -70,9 +70,7 @@ $(function() {
         $.post(
             "../../manage/center/ajaxFindForPage.do",
             "name=" + centerName + "&pageId=" + pageId + "&startRow=" + startRow + "&rows=" + rows,
-            function(data) {
-                var gridPage = eval(data);
-
+            function(gridPage) {
                 var maxIndex = $("#page_id option:last").index(); //获取Select最大的索引值
                 var len = maxIndex + 1 - gridPage.total;
                 if (len > 0) {

@@ -13,6 +13,10 @@
             width: 160px;
         }
 
+        .appver-appid {
+            width: 200px;
+        }
+
         .appver-system {
             width: 160px;
         }
@@ -22,11 +26,44 @@
         }
 
         .appver-min {
-            width: 200px;
+            width: 160px;
         }
 
         .appver-action {
             width: 160px;
+        }
+
+        #default_btn {
+            width: 120px;
+            height: 36px;
+            font-size: 16px;
+            background: #478de4;
+            border: 0;
+            border-radius: 3px;
+            color: white;
+            position: relative;
+            float: right;
+            top: 10px;
+            margin-right: 30px;
+            cursor: pointer;
+        }
+
+        #default_btn:hover {
+            background: #5ca1f7;
+        }
+
+        #default_ver_box {
+            display: none;
+        }
+
+        #add_default_ver td {
+            text-align: left;
+            padding-left: 10px;
+        }
+
+        #add_default_ver td span:hover {
+            cursor: pointer;
+            color: #5ca1f7;
         }
     </style>
     <script src="../../resources/plugins/jquery-3.2.1.min.js"></script>
@@ -44,7 +81,8 @@
         <label for="search_text" id="search_type">中心名称</label>
         <input type="text" id="search_text">
         <input type="button" id="search_btn" value="查询">
-        <input type="button" id="add" value="添加" onclick="dispatch('add',0)">
+        <input type="button" id="add" value="添加" onclick="dispatch(true, 'add', 0)">
+        <input type="button" id="default_btn" value="管理缺省版本" onclick="showDefaultVer()">
     </div>
     <div class="data-zone">
         <div class='table-cont' id='table-cont'>
@@ -52,6 +90,7 @@
                 <thead class="table-head">
                 <tr>
                     <th class="appver-center">用户中心</th>
+                    <th class="appver-appid">应用标识</th>
                     <th class="appver-system">手机系统</th>
                     <th class="appver-assign">指定版本</th>
                     <th class="appver-min">最低版本</th>
@@ -76,6 +115,28 @@
             <input type="hidden" id="avcenter">
         </div>
     </div>
+</div>
+<div id="default_ver_box">
+    <table>
+        <thead>
+        <tr>
+            <th class="appver-appid">应用标识</th>
+            <th class="appver-system">手机系统</th>
+            <th class="appver-assign">指定版本</th>
+            <th class="appver-min">最低版本</th>
+            <th class="appver-action">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr id="add_default_ver">
+            <td colspan="4">
+                <span title="添加缺省版本">
+                    <img alt="添加缺省版本" src="../../../resources/images/operate/addNew.png">&nbsp;添加缺省版本
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>

@@ -7,5 +7,5 @@ import com.tipray.constant.SystemPropertyConst;
 public interface CrcDll extends Library {
 	CrcDll instanceDll = (CrcDll) Native.loadLibrary(SystemPropertyConst.CRC_DLL_PATH, CrcDll.class);
 
-	public byte GetCRC(byte[] data, int dataLen);
+	byte GetCRC(byte[] data, int dataLen);
 }

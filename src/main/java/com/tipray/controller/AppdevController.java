@@ -105,8 +105,8 @@ public class AppdevController {
 
     @RequestMapping(value = "isExist.do")
     @ResponseBody
-    public Boolean isAppdevExist(String uuid) {
-        return appdevService.isAppdevExist(uuid);
+    public Boolean isAppdevExist(String uuid, String appid) {
+        return appdevService.isAppdevExist(uuid, appid);
     }
 
     @PermissionAnno("appdevManage")

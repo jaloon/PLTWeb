@@ -6,6 +6,7 @@
         <id column="id" property="id"/>
         <result column="center_id" property="centerId"/>
         <result column="center_name" property="centerName"/>
+        <result column="app_id" property="appid"/>
         <result column="system" property="system"/>
         <result column="assign_webapp_version" property="assignVer"/>
         <result column="min_webapp_version" property="minVer"/>
@@ -15,6 +16,7 @@
         a.id,
     	a.center_id,
         c.`name` center_name,
+        a.app_id,
         a.system,
         a.assign_webapp_version,
         a.min_webapp_version
@@ -31,10 +33,11 @@
     </select>
 
     <insert id="add" useGeneratedKeys="true" keyProperty="id" parameterType="com.tipray.bean.AppVer">
-		INSERT INTO tbl_webapp_version(center_id, system, assign_webapp_version, min_webapp_version)
+		INSERT INTO tbl_webapp_version(center_id, app_id, system, assign_webapp_version, min_webapp_version)
 		VALUES
 			(
 				#{centerId},
+				#{appid},
 				#{system},
 				#{assignVer},
 				#{minVer}
@@ -58,15 +61,14 @@
         SELECT
         <include refid="select_colums"></include>
         FROM
-        tbl_webapp_version a,
-        tbl_center c
+        tbl_webapp_version a LEFT JOIN
+        tbl_center c ON a.center_id = c.id
         WHERE
-        a.center_id = c.id
-        AND a.id = #{id}
+        a.id = #{id}
     </select>
 
     <select id="countCenterAppVer" resultType="java.lang.Integer">
-        select count(*) from tbl_webapp_version where center_id = #{centerId} and system = #{system}
+        select count(*) from tbl_webapp_version where center_id = #{centerId} and app_id = #{appid} and system = #{system}
     </select>
 
     <select id="count" parameterType="com.tipray.bean.AppVer" resultType="java.lang.Long">
@@ -101,6 +103,7 @@
             id,
             center_id centerId,
             system,
+            app_id appid,
             assign_webapp_version assignVer,
             min_webapp_version minVer,
             gmt_create createDate,
@@ -111,12 +114,13 @@
             center_id = #{centerId}
     </select>
 
-    <select id="getAssignVerByCenterIdAndSystem" resultType="java.lang.String">
-        select assign_webapp_version from tbl_webapp_version where center_id = #{centerId} and system = #{system}
+    <select id="getAssignVerByAppver" parameterType="com.tipray.bean.AppVer" resultType="java.lang.String">
+        select assign_webapp_version from tbl_webapp_version where center_id = #{centerId} and app_id = #{appid} and system = #{system}
     </select>
 
     <select id="getCenterWebAddrById" parameterType="java.lang.Long" resultType="com.tipray.bean.AppInfo">
         select
+            c.id center_id,
             inet_ntoa(c.ip) ip,
             c.web_port port
         from
@@ -128,7 +132,19 @@
     </select>
 
     <select id="getCenterWebAddrByCenterId" parameterType="java.lang.Long" resultType="com.tipray.bean.AppInfo">
-        select inet_ntoa(ip) ip, web_port port from tbl_center where id = #{centerId}
+        select id center_id, inet_ntoa(ip) ip, web_port port from tbl_center where id = #{centerId}
     </select>
-
+        
+    <select id="getDefaultVer" resultMap="fullResultMap">
+        SELECT
+            id,
+            app_id appid,
+            system,
+            assign_webapp_version,
+            min_webapp_version
+        FROM
+            tbl_webapp_version
+        WHERE
+            center_id = 0;
+    </select>
 </mapper>
