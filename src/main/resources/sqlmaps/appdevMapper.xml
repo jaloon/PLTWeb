@@ -142,25 +142,26 @@
     </select>
 
     <select id="findByCenterId" parameterType="java.lang.Long" resultType="com.tipray.bean.AppDev">
-        select
-        a.id,
-        a.app_id appid,
-    	a.uuid,
-        a.system,
-        a.model,
-        a.current_webapp_version currentVer,
-        a.name owner,
-        a.phone,
-        a.duty,
-        a.institution,
-        a.gmt_create createDate,
-        a.gmt_modified modifyDate
-        from
-        tbl_webapp_device a,
-        tbl_center_device d
-        where
-        a.uuid = d.uuid
-        and d.center_id = #{centerId}
+        SELECT
+            a.id,
+            a.uuid,
+            a.app_id appid,
+            a.system,
+            a.model,
+            a.current_webapp_version currentVer,
+            a.`name` `owner`,
+            a.phone,
+            a.duty,
+            a.institution,
+            a.gmt_create createDate,
+            a.gmt_modified modifyDate
+        FROM
+            tbl_webapp_device a,
+            tbl_center_device d
+        WHERE
+            a.uuid = d.uuid
+            AND a.app_id = d.app_id
+            AND d.center_id = #{centerId}
     </select>
 
     <insert id="addAppCenter">
