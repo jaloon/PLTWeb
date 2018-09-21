@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="../../resources/css/edit.css ">
     <script src="../../resources/plugins/jquery-3.2.1.min.js"></script>
     <script src="../../resources/plugins/layer/layer.js"></script>
-    <script src="../../resources/plugins/laydate/laydate.js"></script>
     <script src="../../resources/plugins/verify.js"></script>
     <script src="../../resources/js/base.js"></script>
     <script src="../../resources/js/appver/appverEdit.js"></script>
@@ -59,7 +58,7 @@
                 <tr>
                     <td>应用标识:</td>
                     <td>
-                        <input type="text" class="editInfo" id="appid" placeholder="pltone_e_seal、pltone_e_seal_accredit...">
+                        <input type="text" class="editInfo" id="appid" placeholder="pltone_e_seal、pltone_e_seal_gasstation...">
                     </td>
                 </tr>
                 <tr>
@@ -111,7 +110,7 @@
                 <tr>
                     <td>应用标识:</td>
                     <td>
-                        <input type="text" class="editInfo" id="appid" placeholder="pltone_e_seal、pltone_e_seal_accredit...">
+                        <input type="text" class="editInfo" id="appid" placeholder="pltone_e_seal、pltone_e_seal_gasstation...">
                     </td>
                 </tr>
                 <tr>

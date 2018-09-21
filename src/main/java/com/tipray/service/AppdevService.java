@@ -15,21 +15,11 @@ public interface AppdevService {
     AppDev addAppdev(AppDev appDev) throws ServiceException;
 
     /**
-     * 新增APP设备信息
-     *
-     * @param appDev    APP设备信息
-     * @param centerIds 用户中心ID，英文逗号“,”分隔
-     * @throws ServiceException
-     */
-    AppDev addAppdev(AppDev appDev, String centerIds) throws ServiceException;
-
-    /**
      * 修改APP设备信息
      *
      * @param appDev    APP设备信息
-     * @param centerIds 用户中心ID，英文逗号“,”分隔
      */
-    AppDev updateAppdev(AppDev appDev, String centerIds) throws ServiceException;
+    AppDev updateAppdev(AppDev appDev) throws ServiceException;
 
     /**
      * 根据手机UUID更新手机型号和当前APP版本号
@@ -107,63 +97,6 @@ public interface AppdevService {
      * @return APP设备信息列表
      */
     GridPage<AppDev> findAppdevForPage(AppDev appDev, Page page);
-
-    /**
-     * 根据APP设备信息记录ID获取用户中心名称
-     *
-     * @param appdevId APP设备信息记录ID
-     * @return
-     */
-    List<String> findCenterNamesByAppdevId(Long appdevId);
-
-    /**
-     * 根据APP设备信息记录ID获取所属用户中心信息
-     *
-     * @param appdevId APP设备信息记录ID
-     * @return
-     */
-    List<Center> findBelongCentersByAppdevId(Long appdevId);
-
-    /**
-     * 根据APP设备信息记录ID获取用户中心信息
-     *
-     * @param appdevId APP设备信息记录ID
-     * @return
-     */
-    List<AppCenter> findAppCentersByAppdevId(Long appdevId);
-
-    /**
-     * 根据APP设备UUID获取用户中心ID列表
-     *
-     * @param uuid APP设备UUID
-     * @param appid 应用标识
-     * @return
-     */
-    List<Long> findCenterIdsByUuidAndAppid(String uuid, String appid);
-
-    /**
-     * 根据APP设备UUID获取用户中心列表
-     *
-     * @param uuid APP设备UUID
-     * @return
-     */
-    List<Center> findCentersByUuid(String uuid);
-
-    /**
-     * 根据用户中心ID获取APP设备UUID
-     *
-     * @param centerId 用户中心ID
-     * @return
-     */
-    List<String> findUuidsByCenterId(Long centerId);
-
-    /**
-     * 根据用户中心ID获取APP同步信息
-     *
-     * @param centerId
-     * @return
-     */
-    AppSync findAppSync(Long centerId);
 
     /**
      * 根据用户中心ID获取用户中心Web地址

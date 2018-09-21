@@ -1,23 +1,34 @@
 package com.tipray.test;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.tipray.bean.AppInfo;
+import com.tipray.bean.Center;
+import com.tipray.core.exception.ServiceException;
+import com.tipray.service.AppdevService;
+import com.tipray.service.CenterService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.tipray.bean.Center;
-import com.tipray.core.exception.ServiceException;
-import com.tipray.service.CenterService;
+import javax.annotation.Resource;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:applicationContext.xml" })
 public class CenterTest {
 	@Resource
 	private CenterService centerService;
+	@Resource
+    private AppdevService appdevService;
+
+    @Test
+	public void appinfo() {
+        AppInfo appInfo = appdevService.getCenterWebAddr(3L);
+        if (appInfo == null) {
+            appInfo = new AppInfo();
+        }
+        System.out.println(appInfo);
+    }
 
 	@Test
 	public void addCenter() {

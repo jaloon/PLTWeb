@@ -13,72 +13,8 @@
     <title>Document</title>
     <link rel="stylesheet" href="../../resources/css/base.css ">
     <link rel="stylesheet" href="../../resources/css/edit.css ">
-    <style type="text/css">
-        .centers {
-            width: 500px;
-            display: none;
-        }
-
-        .centers > table {
-            left: 10px;
-            top: 5px;
-        }
-
-        .centers > .table-zone {
-            padding-left: 20px;
-            height: 280px;
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
-
-        .centers > .table-zone tr td:first-child {
-            width: 100%;
-        }
-
-        .centers > .oper-zone {
-            top: 12px;
-        }
-
-        #center_cancel {
-            width: 100px;
-            height: 30px;
-            border: 1px solid #478de4;
-            border-radius: 3px;
-            background: #ffffff;
-            color: #40454b;
-            position: absolute;
-            top: 50%;
-            margin-top: -15px;
-            right: 124px;
-            cursor: pointer;
-        }
-
-        #center_cancel:hover{
-            color: #5ca1f7;
-            border-color: #5ca1f7;
-        }
-
-        #center_confirm {
-            width: 100px;
-            height: 30px;
-            background: #478de4;
-            color: #ffffff;
-            border: 0;
-            border-radius: 3px;
-            position: absolute;
-            top: 50%;
-            margin-top: -15px;
-            right: 14px;
-            cursor: pointer;
-        }
-
-        #center_confirm:hover{
-            background: #5ca1f7;
-        }
-    </style>
     <script src="../../resources/plugins/jquery-3.2.1.min.js"></script>
     <script src="../../resources/plugins/layer/layer.js"></script>
-    <script src="../../resources/plugins/laydate/laydate.js"></script>
     <script src="../../resources/plugins/verify.js"></script>
     <script src="../../resources/js/base.js"></script>
     <script src="../../resources/js/appdev/appdevEdit.js"></script>
@@ -110,15 +46,6 @@
             <tr>
                 <td>手机型号:</td>
                 <td><input type="text" class="editInfo" value="${appdev.model}" readonly></td>
-            </tr>
-            <tr>
-                <td>用户中心:</td>
-                <td>
-                    <%--<input type="text" class="editInfo" id="centers" value="${centerStr}" readonly>--%>
-                    <a href="#">
-                        <div class="editInfo" id="centers" style="background: #e6e7e9;">${centerStr}</div>
-                    </a>
-                </td>
             </tr>
             <tr>
                 <td>当前版本:</td>
@@ -153,7 +80,7 @@
             <tr>
                 <td>应用标识:</td>
                 <td>
-                    <input type="text" class="editInfo" id="appid" placeholder="pltone_e_seal、pltone_e_seal_accredit...">
+                    <input type="text" class="editInfo" id="appid" placeholder="pltone_e_seal、pltone_e_seal_gasstation...">
                 </td>
             </tr>
             <tr>
@@ -170,15 +97,6 @@
                 <td>手机型号:</td>
                 <td>
                     <input type="text" class="editInfo" id="model">
-                </td>
-            </tr>
-            <tr>
-                <td>用户中心:</td>
-                <td>
-                    <%--<input type="text" class="editInfo" id="centers" readonly>--%>
-                    <a href="#">
-                        <div class="editInfo" id="centers"></div>
-                    </a>
                 </td>
             </tr>
             <tr>
@@ -255,15 +173,6 @@
                 </td>
             </tr>
             <tr>
-                <td>用户中心:</td>
-                <td>
-                    <%--<input type="text" class="editInfo" id="centers" value="${centerStr}" readonly>--%>
-                    <a href="#">
-                        <div class="editInfo" id="centers">${centerStr}</div>
-                    </a>
-                </td>
-            </tr>
-            <tr>
                 <td>当前版本:</td>
                 <td>
                     <input type="text" class="editInfo" id="current" value="${appdev.currentVer}"
@@ -290,61 +199,6 @@
         <div class="oper-zone">
             <input type="button" id="cancel" value="取消">
             <input type="button" id="confirm" value="确认">
-        </div>
-    </c:if>
-</div>
-<div class="container centers">
-    <c:if test="${mode=='view'}">
-        <div class="table-zone">
-            <table>
-                <c:forEach items="${centers}" var="center">
-                    <tr>
-                        <td><input type="checkbox" checked disabled>&nbsp;${center}</td>
-                    </tr>
-                </c:forEach>
-            </table>
-        </div>
-    </c:if>
-    <c:if test="${mode=='edit'}">
-        <div class="table-zone">
-            <table>
-                <c:forEach items="${centers}" var="center">
-                    <tr>
-                        <td>
-                            <label>
-                                <input type="checkbox" class="center ${center.checked}" value="${center.id}" ${center.checked}>
-                                <span>${center.name}</span>
-                            </label>
-                        </td>
-                    </tr>
-                </c:forEach>
-            </table>
-        </div>
-        <div class="oper-zone">
-            <input type="button" id="center_cancel" value="取消">
-            <input type="button" id="center_confirm" value="确认">
-        </div>
-    </c:if>
-    <c:if test="${mode=='add'}">
-        <div class="table-zone">
-            <table>
-                <c:forEach items="${centers}" var="center">
-                    <c:if test="${center.id > 0}">
-                        <tr>
-                            <td>
-                                <label>
-                                    <input type="checkbox" class="center" value="${center.id}">
-                                    <span>${center.name}</span>
-                                </label>
-                            </td>
-                        </tr>
-                    </c:if>
-                </c:forEach>
-            </table>
-        </div>
-        <div class="oper-zone">
-            <input type="button" id="center_cancel" value="取消">
-            <input type="button" id="center_confirm" value="确认">
         </div>
     </c:if>
 </div>

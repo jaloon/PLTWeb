@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>APP归属管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=center-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../resources/css/base.css" media="all">
+    <link rel="stylesheet" href="../../resources/css/normal.css" media="all">
+    <script src="../../resources/plugins/jquery-3.2.1.min.js"></script>
+    <script src="../../resources/plugins/layer/layer.js"></script>
+    <script src="../../resources/js/base.js"></script>
+    <script src="../../resources/js/normal.js"></script>
+    <script src="../../resources/js/centerdev/centerdevList.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="nav-addr">
+        <img src="../../resources/images/navbar/ascription.png"> APP归属管理
+    </div>
+    <div class="search-zone">
+        <select id="search_type">
+            <option value="0">所有</option>
+            <option value="1">手机UUID</option>
+            <option value="2">用户中心</option>
+        </select>
+        <input type="text" id="search_text" value="所有" readonly>
+        <input type="button" id="search_btn" value="查询">
+        <input type="button" id="add" value="添加" onclick="dispatch('add',0)">
+    </div>
+    <div class="data-zone">
+        <div class='table-cont' id='table-cont'>
+            <table width="100%">
+                <thead class="table-head">
+                <tr>
+                    <th class="centerdev-id">序号</th>
+                    <th class="centerdev-uuid">手机UUID</th>
+                    <th class="centerdev-center">用户中心</th>
+                    <th class="centerdev-action">操作</th>
+                </tr>
+                </thead>
+                <tbody class="table-body"></tbody>
+            </table>
+        </div>
+        <div class="page">
+            <span>第</span>
+            <select id="page_id">
+                <option value="1">1</option>
+            </select>
+            <span id="page_info">页(几条数据)/共几页(共几条数据)</span>
+            <select id="page_size">
+                <option value="25">25条/页</option>
+                <option value="50">50条/页</option>
+                <option value="100">100条/页</option>
+                <option value="150">150条/页</option>
+            </select>
+            <input type="hidden" id="cduuid">
+            <input type="hidden" id="cdcenter">
+        </div>
+    </div>
+</div>
+</body>
+</html>

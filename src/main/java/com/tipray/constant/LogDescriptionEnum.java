@@ -26,11 +26,17 @@ public enum LogDescriptionEnum {
 	APPDEV_ALTER((short) 0x0502, "修改APP设备信息"),
 	/** 删除APP设备信息 */
 	APPDEV_DELETE((short) 0x0503, "删除APP设备信息"),
-	/** 添加APP设备信息 */
+	/** 添加APP归属信息 */
+	CENTERDEV_ADD((short) 0x0701, "添加APP归属信息"),
+	/** 修改APP归属信息 */
+	CENTERDEV_ALTER((short) 0x0702, "修改APP归属信息"),
+	/** 删除APP归属信息 */
+	CENTERDEV_DELETE((short) 0x0703, "删除APP归属信息"),
+	/** 添加APP版本信息 */
 	APPVER_ADD((short) 0x0601, "添加APP版本信息"),
-	/** 修改APP设备信息 */
+	/** 修改APP版本信息 */
 	APPVER_ALTER((short) 0x0602, "修改APP版本信息"),
-	/** 删除APP设备信息 */
+	/** 删除APP版本信息 */
 	APPVER_DELETE((short) 0x0603, "删除APP版本信息"),
 	/** 添加操作员 */
 	USER_ADD((short) 0x0301, "添加操作员"),

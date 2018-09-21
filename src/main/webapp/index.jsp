@@ -29,6 +29,10 @@
             background-image: url(resources/images/navbar/cell.png);
         }
 
+        .centerdevManage dt {
+            background-image: url(resources/images/navbar/ascription.png);
+        }
+
         .appverManage dt {
             background-image: url(resources/images/navbar/app.png);
         }
@@ -79,6 +83,11 @@
           		<pop:Permission ename="appdevManage">
 		            <dl class="appdevManage">
 		                <dt onclick="showList('appdev')">APP设备管理</dt>
+		            </dl>
+          		</pop:Permission>
+          		<pop:Permission ename="centerdevManage">
+		            <dl class="centerdevManage">
+		                <dt onclick="showList('centerdev')">APP归属管理</dt>
 		            </dl>
           		</pop:Permission>
           		<pop:Permission ename="appverManage">

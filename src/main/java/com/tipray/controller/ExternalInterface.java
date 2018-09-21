@@ -14,6 +14,7 @@ import com.tipray.constant.reply.CenterRc4ObtainErrorEnum;
 import com.tipray.constant.reply.WebAddrObtainErrorEnum;
 import com.tipray.service.AppdevService;
 import com.tipray.service.AppverService;
+import com.tipray.service.CenterDevService;
 import com.tipray.service.CenterService;
 import com.tipray.service.DeviceService;
 import com.tipray.util.EmptyObjectUtil;
@@ -56,6 +57,8 @@ public class ExternalInterface {
     @Resource
     private AppverService appverService;
     @Resource
+    private CenterDevService centerDevService;
+    @Resource
     private HttpServletRequest request;
 
     /**
@@ -80,7 +83,7 @@ public class ExternalInterface {
     @RequestMapping(value = "appSync.do")
     public AppSync appSync(Long id) {
         logger.info("用户中心【{}】同步APP配置信息，from: {}", id, HttpServletUtil.getHost(request));
-        AppSync appsync = appdevService.findAppSync(id);
+        AppSync appsync = centerDevService.findAppSync(id);
         return appsync;
     }
 
@@ -320,14 +323,14 @@ public class ExternalInterface {
                 appdevService.addAppdev(appDev);
             }
             String assignVer = appverService.getAssignVerByAppver(0L, appid, system);
-            List<Long> centerIds = appdevService.findCenterIdsByUuidAndAppid(uuid, appid);
+            List<Long> centerIds = centerDevService.findCenterIdsByUuid(uuid);
             int centerNum = centerIds.size();
             if (centerNum == 0) {
                 if (StringUtil.isEmpty(assignVer)) {
                     logger.warn("请求APP配置失败：{}", AppInfoObtainErrorEnum.CENTER_NULL);
                     return ResponseMsgUtil.error(AppInfoObtainErrorEnum.CENTER_NULL);
                 }
-                centerId = 0L;
+                // centerId = 0L;
             } else if (centerNum == 1) {
                 centerId = centerIds.get(0);
                 String ver = appverService.getAssignVerByAppver(centerId, appid, system);
@@ -351,12 +354,16 @@ public class ExternalInterface {
                             return ResponseMsgUtil.error(AppInfoObtainErrorEnum.CENTER_ID_INVALID);
                         }
                     }
-                    centerId = 0L;
+                    // centerId = 0L;
                 }
             }
-            AppInfo appInfo = new AppInfo();
-            if (centerId > 0) {
-                appInfo = appdevService.getCenterWebAddr(centerId);
+            AppInfo appInfo = appdevService.getCenterWebAddr(centerId);
+            if (appInfo == null) {
+                appInfo = new AppInfo();
+                if (centerId > 0) {
+                    logger.warn("用户中心【{}】不存在！", centerId);
+                    // appInfo.setCenter_id(centerId.intValue());
+                }
             }
             if (assignVer == null) {
                 logger.warn(AppInfoObtainErrorEnum.UP_VER_NULL.msg());

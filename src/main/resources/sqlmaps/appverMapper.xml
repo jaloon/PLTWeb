@@ -128,7 +128,7 @@
             tbl_webapp_version v
         where
             c.id = v.center_id
-            and v.id = #{centerId}
+            and v.id = #{id}
     </select>
 
     <select id="getCenterWebAddrByCenterId" parameterType="java.lang.Long" resultType="com.tipray.bean.AppInfo">

@@ -34,6 +34,10 @@
 			<permission cname="编辑APP设备" ename="editAppdev" permissionType="0" description="" />
 			<permission cname="查看APP设备" ename="viewAppdev" permissionType="0" description="" />
 		</permission>
+		<permission cname="APP归属管理" ename="centerdevManage" permissionType="1" gridUrl="normal/centerdev/centerdevlist.jsp">
+			<permission cname="编辑APP归属" ename="editCenterdev" permissionType="0" description="" />
+			<permission cname="查看APP归属" ename="viewCenterdev" permissionType="0" description="" />
+		</permission>
 		<permission cname="APP版本管理" ename="appverManage" permissionType="1" gridUrl="normal/appver/appverlist.jsp">
 			<permission cname="编辑APP版本" ename="editAppver" permissionType="0" description="" />
 			<permission cname="查看APP版本" ename="viewAppver" permissionType="0" description="" />

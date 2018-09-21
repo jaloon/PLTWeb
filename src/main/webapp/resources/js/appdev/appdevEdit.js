@@ -1,54 +1,9 @@
 $(function () {
     var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-    var centerLayer;
 
-    var success_zh_text = "修改成功！"
-    var error_zh_text = "修改失败！"
+    var success_zh_text = "修改成功！";
+    var error_zh_text = "修改失败！";
     var mode = $("#mode").val();
-
-    $("#centers").click(function () {
-        var h = '389px';
-        if ("view" == mode) {
-            var centers = $("#centers").html();
-            if (centers.length == 0) {
-                return;
-            }
-            h = '325px';
-        }
-        centerLayer = layer.open({
-            type: 1,
-            title: ['所属用户中心 ', 'font-size:14px;color:#ffffff;background:#478de4;'],
-            // area: '500px',
-            area: ['500px', h],
-            // moveOut: true,
-            content: $('.centers'),
-            end: resetCheckCenters()
-        })
-    });
-
-    $("#center_cancel").click(function () {
-        layer.close(centerLayer);
-    });
-
-    $("#center_confirm").click(function () {
-        $(".center").removeClass("checked");
-        var $checked = $(".center:checked");
-        $checked.addClass("checked");
-        var centers = "";
-        $checked.each(function () {
-            centers += "、" + $(this).next().html();
-        });
-        if (centers.length > 0) {
-            centers = centers.slice(1);
-        }
-        $("#centers").html(centers);
-        layer.close(centerLayer);
-    });
-
-    function resetCheckCenters() {
-        $(".center").prop("checked", false);
-        $(".checked").prop("checked", true);
-    }
 
     $("#cancel").click(function () {
         parent.layer.close(index);
@@ -58,33 +13,22 @@ $(function () {
         var id = $("#id").val();
         var system = $("#system").val();
         var model = $("#model").val();
-        // var center = $("#center").val();
         var current = $("#current").val();
         var owner = $("#owner").val();
         var phone = $("#phone").val();
         var duty = $("#duty").val();
         var org = $("#org").val();
 
-        var centers = "";
-        $(".checked").each(function () {
-            // if (this.checked) {
-            centers += ',' + $(this).val();
-            // }
-        });
-        if (centers.length > 0) {
-            centers = centers.slice(1);
-        }
-
         var url = "../../manage/appdev/update.do";
         var param = "id=" + id + "&system=" + system + "&model=" + model + "&currentVer=" + current +
-            "&owner=" + owner + "&phone=" + phone + "&duty=" + duty + "&institution=" + org + "&centerIds=" + centers;
+            "&owner=" + owner + "&phone=" + phone + "&duty=" + duty + "&institution=" + org;
 
         if ("add" == mode) {
             var uuid = $("#uuid").val();
             var appid = $("#appid").val();
             url = "../../manage/appdev/add.do";
-            param = "uuid=" + uuid + "&appid=" + appid + "&system=" + system + "&model=" + model + "&currentVer=" + current +
-                "&owner=" + owner + "&phone=" + phone + "&duty=" + duty + "&institution=" + org + "&centerIds=" + centers;
+            param = "uuid=" + uuid + "&appid=" + appid + "&system=" + system + "&model=" + model + "&currentVer="
+                + current + "&owner=" + owner + "&phone=" + phone + "&duty=" + duty + "&institution=" + org;
             success_zh_text = "添加成功！";
             error_zh_text = "添加失败！";
             if (isNull(uuid)) {

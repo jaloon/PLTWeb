@@ -19,15 +19,11 @@ function isIP(ip) {
 /**
  * 端口号校验
  * 验证规则：纯数字，0~65535
- * @param {number} port 
+ * @param {string} port
  */
 function isPort(port) {
     var parten = /^(\d)+$/g;
-    if (parten.test(port) && parseInt(port) <= 65535 && parseInt(port) >= 0) {
-        return true;
-    } else {
-        return false;
-    }
+    return parten.test(port) && parseInt(port) <= 65535 && parseInt(port) >= 0;
 }
 
 /**
@@ -80,19 +76,16 @@ function checkMobil(mobil) {
  * @param {*} phone 
  */
 function isPhone(phone) {
-    if (checkTel(phone) || checkMobil(phone)) {
-        return true;
-    }
-    return false;
+    return checkTel(phone) || checkMobil(phone);
 }
 
 /**
  * 账号校验
- * 验证规则：字母、数字、下划线组成，字母开头，4-16位。
+ * 验证规则：字母、数字、下划线组成，字母开头，2-16位。
  * @param {*} account 
  */
 function isAccount(account) {
-    var reg = /^[a-zA-z]\w{3,15}$/;
+    var reg = /^[a-zA-z]\w{1,15}$/;
     return reg.test(account);
 }
 
@@ -104,10 +97,7 @@ function isAccount(account) {
  */
 function isIdCard(idCard) {
     var checkFlag = new clsIDCard(idCard);
-    if (!checkFlag.IsValid()) {
-        return false;
-    }
-    return true;
+    return checkFlag.IsValid();
 }
 
 /******************************************* code for checking idcard begin... ******************************************/

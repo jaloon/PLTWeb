@@ -80,7 +80,7 @@
                 <tr>
                     <td>账号:</td>
                     <td>
-                        <input type="text" class="editInfo" id="account">
+                        <input type="text" class="editInfo" id="account" placeholder="字母、数字、下划线组成，字母开头，2-16位">
                     </td>
                 </tr>
                 <tr>
